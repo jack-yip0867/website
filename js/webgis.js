@@ -88,12 +88,12 @@ var STUDENT_DATA = {
 // --- Build student layers ---
 var studentLayers = {};
 
-function createStudentLayers(id, name) {
+function createStudentLayers(id, name, pollutant) {
     var data = STUDENT_DATA[id];
     var prefix = name + ' - ';
 
     var bivariate = new ol.layer.VectorImage({
-        title: prefix + 'NO2-Population Bivariate',
+        title: prefix + pollutant + ' Bivariate',
         visible: true,
         source: new ol.source.Vector({
             features: new ol.format.GeoJSON().readFeatures(data.bivariate, {
@@ -115,7 +115,7 @@ function createStudentLayers(id, name) {
     });
 
     var dissolved = new ol.layer.Vector({
-        title: prefix + 'NO2 Dissolved Zones',
+        title: prefix + pollutant + ' Zones',
         visible: true,
         source: new ol.source.Vector({
             features: new ol.format.GeoJSON().readFeatures(data.chart, {
@@ -129,9 +129,9 @@ function createStudentLayers(id, name) {
     return { bivariate: bivariate, province: province, dissolved: dissolved };
 }
 
-studentLayers[1] = createStudentLayers(1, 'Student 1');
-studentLayers[2] = createStudentLayers(2, 'Student 2');
-studentLayers[3] = createStudentLayers(3, 'Student 3');
+studentLayers[1] = createStudentLayers(1, 'songjiwei', 'NO2');
+studentLayers[2] = createStudentLayers(2, 'zhangzihao', 'PM2.5');
+studentLayers[3] = createStudentLayers(3, 'yehongjie', 'PM10');
 
 // --- If a student param is present, hide other students' layers ---
 if (activeStudent) {
