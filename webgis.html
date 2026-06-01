@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive WebGIS map for exploring air quality data across the Netherlands provinces.">
     <title>WebGIS - Netherlands Air Quality Monitoring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.5.2/ol.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -26,21 +30,24 @@
 </head>
 <body>
     <div class="webgis-page">
-        <nav style="flex-shrink:0;">
-            <a href="index.html" class="logo">&#127758; Air<span>Quality</span> NL</a>
+        <nav style="flex-shrink:0;" aria-label="Main navigation">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">AQ</span>
+                Air<span>Quality</span> NL
+            </a>
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="results.html">Results</a></li>
                 <li><a href="webgis.html" class="active">WebGIS</a></li>
-                <li><a href="data.html">Data & Methods</a></li>
+                <li><a href="data.html">Data &amp; Methods</a></li>
             </ul>
         </nav>
 
         <div class="map-toolbar">
             <label>Basemap:
                 <select id="basemap-select" onchange="setBaseLayer(this.value)">
-                    <option value="OpenStreetMap">OpenStreetMap</option>
-                    <option value="CartoDB Positron">CartoDB Positron</option>
+                    <option value="OpenStreetMap">OSM</option>
+                    <option value="CartoDB Positron">Positron</option>
                     <option value="Satellite">Satellite</option>
                 </select>
             </label>
@@ -48,26 +55,25 @@
             <div class="separator"></div>
 
             <span class="student-label">songjiwei</span>
-            <label><input type="checkbox" id="chk-s1-bivariate" checked onchange="toggleStudentLayer(1, 'bivariate', this.checked)"> Bivariate Map</label>
-            <label><input type="checkbox" id="chk-s1-province" checked onchange="toggleStudentLayer(1, 'province', this.checked)"> Provinces</label>
-            <label><input type="checkbox" id="chk-s1-dissolved" checked onchange="toggleStudentLayer(1, 'dissolved', this.checked)"> NO2 Zones</label>
+            <label><input type="checkbox" id="chk-s1-bivariate" checked onchange="toggleStudentLayer(1, 'bivariate', this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s1-province" checked onchange="toggleStudentLayer(1, 'province', this.checked)"> Province</label>
+            <label><input type="checkbox" id="chk-s1-dissolved" checked onchange="toggleStudentLayer(1, 'dissolved', this.checked)"> NO2</label>
 
             <div class="separator"></div>
 
             <span class="student-label">zhangzihao</span>
-            <label><input type="checkbox" id="chk-s2-bivariate" checked onchange="toggleStudentLayer(2, 'bivariate', this.checked)"> Bivariate Map</label>
-            <label><input type="checkbox" id="chk-s2-province" checked onchange="toggleStudentLayer(2, 'province', this.checked)"> Provinces</label>
-            <label><input type="checkbox" id="chk-s2-dissolved" checked onchange="toggleStudentLayer(2, 'dissolved', this.checked)"> PM2.5 Zones</label>
+            <label><input type="checkbox" id="chk-s2-bivariate" checked onchange="toggleStudentLayer(2, 'bivariate', this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s2-province" checked onchange="toggleStudentLayer(2, 'province', this.checked)"> Province</label>
+            <label><input type="checkbox" id="chk-s2-dissolved" checked onchange="toggleStudentLayer(2, 'dissolved', this.checked)"> PM2.5</label>
 
             <div class="separator"></div>
 
             <span class="student-label">yehongjie</span>
-            <label><input type="checkbox" id="chk-s3-bivariate" checked onchange="toggleStudentLayer(3, 'bivariate', this.checked)"> Bivariate Map</label>
-            <label><input type="checkbox" id="chk-s3-province" checked onchange="toggleStudentLayer(3, 'province', this.checked)"> Provinces</label>
-            <label><input type="checkbox" id="chk-s3-dissolved" checked onchange="toggleStudentLayer(3, 'dissolved', this.checked)"> PM10 Zones</label>
+            <label><input type="checkbox" id="chk-s3-bivariate" checked onchange="toggleStudentLayer(3, 'bivariate', this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s3-province" checked onchange="toggleStudentLayer(3, 'province', this.checked)"> Province</label>
+            <label><input type="checkbox" id="chk-s3-dissolved" checked onchange="toggleStudentLayer(3, 'dissolved', this.checked)"> PM10</label>
 
             <div class="separator"></div>
-            <span style="color:#636e72;font-size:13px;">&#9432; Click a province for details</span>
         </div>
 
         <div id="map"></div>
@@ -95,5 +101,6 @@
     <script src="js/data_yehongjie.js"></script>
     <script src="js/results-data.js"></script>
     <script src="js/webgis.js"></script>
+    <script src="js/app.js" defer></script>
 </body>
 </html>

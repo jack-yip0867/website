@@ -48,11 +48,11 @@ var provinceHighlightStyle = new ol.style.Style({
 });
 
 var BIV_COLORS = {
-    11:'#e8e8e8', 12:'#cfd0cf', 13:'#babfba', 14:'#a7aea7', 15:'#939d93',
-    21:'#d0b8d0', 22:'#b7a6bf', 23:'#a297ae', 24:'#8d889d', 25:'#77798d',
-    31:'#b888b8', 32:'#9f7dae', 33:'#8972a4', 34:'#74679a', 35:'#5e5c8f',
-    41:'#a058a0', 42:'#87549e', 43:'#71509c', 44:'#5b4c9a', 45:'#444898',
-    51:'#882828', 52:'#6f2b8e', 53:'#592e94', 54:'#43319a', 55:'#2c34a0',
+    11:'#fffffe', 12:'#ffe8ee', 13:'#ffcbd7', 14:'#ffaec0', 15:'#ff88a6',
+    21:'#ddfffd', 22:'#cde6e5', 23:'#c3c6cb', 24:'#bbc0c7', 25:'#adb5bd',
+    31:'#b9fff8', 32:'#a4dfd7', 33:'#95b6c3', 34:'#8a9cad', 35:'#7d8ba1',
+    41:'#7cfffd', 42:'#64dbdc', 43:'#54b5bd', 44:'#4591a0', 45:'#397e8d',
+    51:'#50fffd', 52:'#44d6d4', 53:'#3c9fad', 54:'#32788f', 55:'#2a6682',
     0: '#cccccc'
 };
 
@@ -122,8 +122,7 @@ function createStudentLayers(id, name, pollutant) {
                 featureProjection: 'EPSG:3857'
             })
         }),
-        style: polStyleFunction,
-        zIndex: 5
+        style: polStyleFunction
     });
 
     return { bivariate: bivariate, province: province, dissolved: dissolved };
@@ -282,23 +281,20 @@ map.on('singleclick', function(evt) {
 function buildLegend() {
     var bivLegend = document.getElementById('biv-legend-content');
     if (bivLegend) {
-        var html = '<div class="biv-legend-5x5">';
-        html += '<div></div>';
-        for (var pop = 1; pop <= 5; pop++) {
-            html += '<div class="cell" style="font-size:0.55rem;color:#888;">Pop' + pop + '</div>';
-        }
+        var html = '<div style="display:inline-grid;grid-template-columns:repeat(5,28px);grid-template-rows:repeat(5,22px);gap:1px;margin:4px 0">';
         for (var pol = 5; pol >= 1; pol--) {
-            html += '<div class="cell" style="font-size:0.55rem;color:#888;">Pol' + pol + '</div>';
             for (var pop = 1; pop <= 5; pop++) {
                 var biv = pol * 10 + pop;
                 var color = BIV_COLORS[biv] || '#ccc';
-                html += '<div class="cell" style="background:' + color + ';font-size:0.6rem;"></div>';
+                var textColor = (pol >= 4 && pop >= 3) ? 'rgba(255,255,255,.7)' : 'rgba(0,0,0,.5)';
+                html += '<div style="background:' + color + ';border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:600;color:' + textColor + ';">' + biv + '</div>';
             }
         }
         html += '</div>';
-        html += '<div style="font-size:0.65rem;color:#888;margin-top:4px;">';
-        html += '← Pop Count →<br>';
-        html += '↑ Pollutant Class ↑';
+        html += '<div style="font-size:0.6rem;color:#888;margin-top:2px;line-height:1.4">';
+        html += '<span style="display:inline-block;width:28px;text-align:center">Pop1</span>';
+        html += '<span style="display:inline-block;width:28px;text-align:center">Pop5</span><br>';
+        html += '<span style="color:#aaa">Pol1(low) &uarr; Pol5(high)</span>';
         html += '</div>';
         bivLegend.innerHTML = html;
     }
