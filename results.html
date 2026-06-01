@@ -4,8 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results - Netherlands Air Quality Monitoring</title>
-    <link rel="stylesheet" href="css/style.css">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7; color: #2d3436; background: #f8f9fa;
+        }
+        nav {
+            background: #1e4d32; padding: 0 2rem; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        nav .logo { color: #fff; font-size: 1.3rem; font-weight: 700; padding: 1rem 0; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        nav .logo span { color: #f8c630; }
+        nav ul { list-style: none; display: flex; gap: 0.25rem; }
+        nav ul li a {
+            color: rgba(255,255,255,0.85); text-decoration: none; padding: 1rem 1.25rem;
+            display: block; font-size: 0.95rem; border-radius: 4px 4px 0 0;
+        }
+        nav ul li a:hover, nav ul li a.active:hover { color: #fff; background: rgba(255,255,255,0.12); }
+        nav ul li a.active { background: #fff; color: #1e4d32; font-weight: 600; }
+        nav ul li a.active:hover { background: #fff; color: #1e4d32; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        section { padding: 3rem 0; }
+        section h2 {
+            font-size: 2rem; color: #1e4d32; margin-bottom: 1.5rem;
+            position: relative; padding-bottom: 0.5rem;
+        }
+        section h2::after { content: ''; position: absolute; bottom: 0; left: 0; width: 60px; height: 3px; background: #f8c630; }
+        section h3 { font-size: 1.3rem; color: #2c6e49; margin: 1.5rem 0 0.75rem; }
+        .result-item { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.08); }
+        .result-item img { width: 100%; height: auto; display: block; border-bottom: 1px solid #dfe6e9; }
+        .result-item .caption { padding: 1rem 1.25rem; font-size: 0.9rem; color: #636e72; }
+        .result-item .caption strong { color: #2d3436; display: block; margin-bottom: 0.25rem; font-size: 1rem; }
+        .table-wrapper { overflow-x: auto; margin: 1.5rem 0; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 15px rgba(0,0,0,0.08); }
+        thead { background: #2c6e49; color: #fff; }
+        th, td { padding: 0.75rem 1rem; text-align: left; font-size: 0.9rem; }
+        tbody tr:nth-child(even) { background: #f1f8f4; }
+        tbody tr:hover { background: #e6f0ea; }
+        footer { background: #2d3436; color: rgba(255,255,255,0.7); text-align: center; padding: 2rem; font-size: 0.85rem; margin-top: 3rem; }
+        footer strong { color: #fff; }
         .pollutant-tabs { display: flex; gap: 0; margin: 1.5rem 0; border-bottom: 3px solid #2c6e49; }
         .pollutant-tabs .tab {
             padding: 0.6rem 1.5rem; cursor: default; font-weight: 600; font-size: 0.95rem;
@@ -25,7 +64,12 @@
         .summary-card .value { font-size: 1.5rem; font-weight: 800; color: #1e4d32; }
         .summary-card .label { font-size: 0.8rem; color: #636e72; margin-top: 0.2rem; }
         .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 768px) { .mini-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; padding: 0 1rem; }
+            nav ul { width: 100%; }
+            nav ul li a { padding: 0.75rem 1rem; text-align: center; }
+            .mini-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -128,7 +172,7 @@
         </section>
 
         <!-- ===== LCC ===== -->
-        <section style="border-top:3px solid var(--accent);padding-top:2rem;">
+        <section style="border-top:3px solid #f8c630;padding-top:2rem;">
             <h2>Land Cover Change (2021&#8594;2023)</h2>
             <p>Built area change detection using ESA WorldCover 10m data.</p>
 
