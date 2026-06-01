@@ -78,27 +78,26 @@ function polStyleFunction(feature) {
     });
 }
 
-// --- Data variable mapping ---
-var STUDENT_DATA = {
-    1: { provinces: GEOJSON_1_NETHERLANDS_PROVINCES, bivariate: GEOJSON_1_NETHERLANDS_BIVARIATE, chart: GEOJSON_1_CHART },
-    2: { provinces: GEOJSON_2_NETHERLANDS_PROVINCES, bivariate: GEOJSON_2_NETHERLANDS_BIVARIATE, chart: GEOJSON_2_CHART },
-    3: { provinces: GEOJSON_3_NETHERLANDS_PROVINCES, bivariate: GEOJSON_3_NETHERLANDS_BIVARIATE, chart: GEOJSON_3_CHART }
+// --- Student data folder mapping ---
+var STUDENT_FOLDERS = {
+    1: 'data_songjiwei',
+    2: 'data_zhangzihao',
+    3: 'data_yehongjie'
 };
 
 // --- Build student layers ---
 var studentLayers = {};
 
 function createStudentLayers(id, name, pollutant) {
-    var data = STUDENT_DATA[id];
+    var folder = STUDENT_FOLDERS[id];
     var prefix = name + ' - ';
 
     var bivariate = new ol.layer.VectorImage({
         title: prefix + pollutant + ' Bivariate',
         visible: true,
         source: new ol.source.Vector({
-            features: new ol.format.GeoJSON().readFeatures(data.bivariate, {
-                featureProjection: 'EPSG:3857'
-            })
+            url: folder + '/netherlands_bivariate.geojson',
+            format: new ol.format.GeoJSON({ dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' })
         }),
         style: bivariateStyleFunction
     });
@@ -107,9 +106,8 @@ function createStudentLayers(id, name, pollutant) {
         title: prefix + 'Province Boundaries',
         visible: true,
         source: new ol.source.Vector({
-            features: new ol.format.GeoJSON().readFeatures(data.provinces, {
-                featureProjection: 'EPSG:3857'
-            })
+            url: folder + '/netherlands_provinces.geojson',
+            format: new ol.format.GeoJSON({ dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' })
         }),
         style: provinceStyle
     });
@@ -118,9 +116,8 @@ function createStudentLayers(id, name, pollutant) {
         title: prefix + pollutant + ' Zones',
         visible: true,
         source: new ol.source.Vector({
-            features: new ol.format.GeoJSON().readFeatures(data.chart, {
-                featureProjection: 'EPSG:3857'
-            })
+            url: folder + '/chart.geojson',
+            format: new ol.format.GeoJSON({ dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' })
         }),
         style: polStyleFunction
     });
