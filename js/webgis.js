@@ -72,19 +72,18 @@ var studentSources = {};
     studentLayers[id] = layer;
 });
 
-// --- If student param present, show only that student ---
-if (activeStudent) {
+// --- If student param present, show only that student; otherwise default to student 1 ---
+if (!activeStudent) activeStudent = 1;
+[1, 2, 3].forEach(function(sid) {
+    studentLayers[sid].setVisible(sid === activeStudent);
+});
+document.addEventListener('DOMContentLoaded', function() {
     [1, 2, 3].forEach(function(sid) {
-        studentLayers[sid].setVisible(sid === activeStudent);
+        var cb = document.getElementById('chk-s' + sid);
+        if (cb) cb.checked = (sid === activeStudent);
     });
-    document.addEventListener('DOMContentLoaded', function() {
-        [1, 2, 3].forEach(function(sid) {
-            var cb = document.getElementById('chk-s' + sid);
-            if (cb) cb.checked = (sid === activeStudent);
-        });
-        updateAllLegends();
-    });
-}
+    updateAllLegends();
+});
 
 // --- Map ---
 var map = new ol.Map({
@@ -119,11 +118,23 @@ function setBaseLayer(name) {
     });
 }
 
-// --- Toggle Student Layer ---
+// --- Toggle Student Layer (mutually exclusive) ---
 function toggleStudentLayer(studentId, visible) {
-    if (studentLayers[studentId]) {
-        studentLayers[studentId].setVisible(visible);
+    if (!visible) {
+        // Don't allow unchecking the only visible layer
+        var anyVisible = false;
+        [1, 2, 3].forEach(function(sid) {
+            if (studentLayers[sid].getVisible()) anyVisible = true;
+        });
+        if (!anyVisible) return;
     }
+    // Show only the selected student, hide others
+    [1, 2, 3].forEach(function(sid) {
+        var show = (sid === studentId) && visible;
+        studentLayers[sid].setVisible(show);
+        var cb = document.getElementById('chk-s' + sid);
+        if (cb) cb.checked = show;
+    });
     updateAllLegends();
 }
 
