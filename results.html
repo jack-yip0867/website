@@ -1,269 +1,670 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GIS lab results including NO2 concentration maps, land cover change analysis, population exposure statistics, and bivariate classification.">
-  <title>Results - Netherlands Air Quality Monitoring</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Results - Netherlands Air Quality Monitoring</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          "Segoe UI",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        line-height: 1.7;
+        color: #2d3436;
+        background: #f8f9fa;
+      }
+      nav {
+        background: #1e4d32;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+      nav .logo {
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        padding: 1rem 0;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      nav .logo span {
+        color: #f8c630;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 0.25rem;
+      }
+      nav ul li a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        padding: 1rem 1.25rem;
+        display: block;
+        font-size: 0.95rem;
+        border-radius: 4px 4px 0 0;
+      }
+      nav ul li a:hover,
+      nav ul li a.active:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.12);
+      }
+      nav ul li a.active {
+        background: #fff;
+        color: #1e4d32;
+        font-weight: 600;
+      }
+      nav ul li a.active:hover {
+        background: #fff;
+        color: #1e4d32;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      section {
+        padding: 3rem 0;
+      }
+      section h2 {
+        font-size: 2rem;
+        color: #1e4d32;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+      }
+      section h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: #f8c630;
+      }
+      section h3 {
+        font-size: 1.3rem;
+        color: #2c6e49;
+        margin: 1.5rem 0 0.75rem;
+      }
+      .result-item {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      }
+      .result-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-bottom: 1px solid #dfe6e9;
+      }
+      .result-item .caption {
+        padding: 1rem 1.25rem;
+        font-size: 0.9rem;
+        color: #636e72;
+      }
+      .result-item .caption strong {
+        color: #2d3436;
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 1rem;
+      }
+      .table-wrapper {
+        overflow-x: auto;
+        margin: 1.5rem 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      }
+      thead {
+        background: #2c6e49;
+        color: #fff;
+      }
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.9rem;
+      }
+      tbody tr:nth-child(even) {
+        background: #f1f8f4;
+      }
+      tbody tr:hover {
+        background: #e6f0ea;
+      }
+      footer {
+        background: #2d3436;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.85rem;
+        margin-top: 3rem;
+      }
+      footer strong {
+        color: #fff;
+      }
+      .pollutant-tabs {
+        display: flex;
+        gap: 0;
+        margin: 1.5rem 0;
+        border-bottom: 3px solid #2c6e49;
+      }
+      .pollutant-tabs .tab {
+        padding: 0.6rem 1.5rem;
+        cursor: default;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border-radius: 6px 6px 0 0;
+        background: #dfe6e9;
+        color: #636e72;
+        border: none;
+        margin-right: 3px;
+      }
+      .pollutant-tabs .tab.active {
+        background: #2c6e49;
+        color: white;
+      }
+      .pollutant-tabs .tab .badge {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        font-weight: 400;
+      }
+      .pollutant-panel {
+        display: none;
+      }
+      .pollutant-panel.active {
+        display: block;
+      }
+      .compact-table {
+        font-size: 0.85rem;
+      }
+      .compact-table td,
+      .compact-table th {
+        padding: 0.5rem 0.75rem;
+      }
+      .placeholder-img {
+        opacity: 0.35;
+        filter: grayscale(1);
+      }
+      .data-wait {
+        color: #e65100;
+        font-size: 0.85rem;
+        font-style: italic;
+      }
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+      .summary-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+      .summary-card .value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e4d32;
+      }
+      .summary-card .label {
+        font-size: 0.8rem;
+        color: #636e72;
+        margin-top: 0.2rem;
+      }
+      @media (max-width: 768px) {
+        nav {
+          flex-direction: column;
+          padding: 0 1rem;
+        }
+        nav ul {
+          width: 100%;
+        }
+        nav ul li a {
+          padding: 0.75rem 1rem;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html" class="logo">&#127758; Air<span>Quality</span> NL</a>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="results.html" class="active">Results</a></li>
+        <li><a href="webgis.html">WebGIS</a></li>
+        <li><a href="data.html">Data & Methods</a></li>
+      </ul>
+    </nav>
 
-  <nav id="site-nav" aria-label="Main navigation">
-    <a href="index.html" class="logo">
-      <span class="logo-icon">AQ</span>
-      Air<span>Quality</span> NL
-    </a>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="results.html" class="active">Results</a></li>
-      <li><a href="webgis.html">WebGIS</a></li>
-      <li><a href="data.html">Data &amp; Methods</a></li>
-    </ul>
-  </nav>
+    <div class="container">
+      <section>
+        <h2>Lab Results</h2>
+        <p>
+          Overview of all GIS lab results: pollutant concentration maps,
+          population exposure, land cover change analysis, and correlation
+          statistics.
+        </p>
+      </section>
 
-  <main id="main">
-    <section>
-      <div class="container">
-        <div class="section-header reveal">
-          <h2>Lab Results</h2>
-          <p>Complete results from all GIS processing steps, including NO2 concentration maps, land cover change analysis, population exposure statistics, and bivariate classification.</p>
+      <!-- ===== POLLUTANT OVERVIEW ===== -->
+      <section>
+        <h2>Pollutant Concentration &amp; Population Exposure</h2>
+
+        <div class="pollutant-tabs">
+          <button class="tab active" onclick="switchPollutantTab('no2')">
+            NO&#8322; <span class="badge">&#9989; ready</span>
+          </button>
+          <button class="tab" onclick="switchPollutantTab('pm2p5')">
+            PM2.5 <span class="badge">&#9203; data soon</span>
+          </button>
+          <button class="tab" onclick="switchPollutantTab('pm10')">
+            PM10 <span class="badge">&#9203; data soon</span>
+          </button>
         </div>
 
-        <!-- NO2 Concentration -->
-        <section>
-          <div class="section-header reveal">
-            <h2>NO2 Concentration Maps</h2>
-            <p>Annual average NO2 concentration for 2023, classified according to EU air quality standards.</p>
-          </div>
-
-          <div class="results-grid reveal">
-            <div class="result-item">
-              <div class="result-img-wrap">
-                <img src="images/no2_population_pie_chart.png" alt="Pie chart showing population exposure distribution across NO2 pollution classes" loading="lazy">
-              </div>
-              <div class="caption">
-                <strong>Population Exposure to NO2</strong>
-                Distribution of population across NO2 pollution classes. <span class="highlight">90.2%</span> of the population lives in Class 2 areas (10-25 &mu;g/m3).
-              </div>
-            </div>
-            <div class="result-item">
-              <div class="result-img-wrap">
-                <img src="images/bivariate_map.png" alt="Bivariate map combining NO2 concentration and population density per province" loading="lazy">
-              </div>
-              <div class="caption">
-                <strong>NO2-Population Bivariate Map</strong>
-                Bivariate classification combining NO2 concentration class (Pol 1-3) and population density class (Pop 1-4) per province.
-              </div>
+        <!-- NO2 Panel -->
+        <div id="panel-no2" class="pollutant-panel active">
+          <div class="result-item">
+            <img
+              src="images/no2_population_pie_chart.png"
+              alt="NO2 Pie Chart"
+              style="max-height: 380px; object-fit: contain; background: #fff"
+            />
+            <div class="caption">
+              <strong>Population Exposure to NO&#8322;</strong> 90.2% lives in
+              Class 2 (10-25 &mu;g/m&sup3;)
             </div>
           </div>
 
-          <h3 style="margin-top:2.5rem">NO2 Concentration by Province</h3>
-          <div class="table-wrapper reveal">
+          <div class="result-item" style="margin-top: 1.5rem">
+            <img
+              src="images/lcc_amac_bar_chart.png"
+              alt="NO2 LCC Chart"
+              style="
+                width: 100%;
+                max-width: 700px;
+                display: block;
+                margin: 0 auto;
+                background: #fff;
+              "
+            />
+            <div class="caption">
+              <strong>NO&#8322; Change by LCC Type</strong> Min / Mean / Max per
+              transition class (Built Area)
+            </div>
+          </div>
+
+          <h3>NO&#8322; by Province</h3>
+          <div class="table-wrapper compact-table">
             <table>
               <thead>
                 <tr>
                   <th>Province</th>
-                  <th class="num">Population Class</th>
-                  <th class="num">Pollution Class</th>
-                  <th class="num">Bivariate</th>
+                  <th>Pop Class</th>
+                  <th>Pol Class</th>
+                  <th>Bivariate</th>
                 </tr>
               </thead>
-              <tbody id="bivariate-table-body">
-                <tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">Loading data...</td></tr>
+              <tbody id="no2-bivariate-table-body">
+                <tr>
+                  <td colspan="4" style="text-align: center">Loading...</td>
+                </tr>
               </tbody>
             </table>
           </div>
-        </section>
 
-        <!-- Land Cover Change -->
-        <section>
-          <div class="section-header reveal">
-            <h2>Land Cover Change Analysis</h2>
-            <p>Built area change detection between 2021 and 2023 using ESA WorldCover 10m data.</p>
-          </div>
-
-          <div class="results-grid reveal">
-            <div class="result-item">
-              <div class="result-img-wrap">
-                <img src="images/verification_change_mask.png" alt="Binary change mask showing built-up land change between 2021 and 2023" loading="lazy">
-              </div>
-              <div class="caption">
-                <strong>Built Area Change Mask</strong>
-                Binary change mask showing areas of built-up land change between 2021 and 2023. Green indicates stable areas, while colored areas show change.
-              </div>
-            </div>
-            <div class="result-item">
-              <div class="result-img-wrap">
-                <img src="images/verification_qgis.png" alt="QGIS verification showing correct overlay of multiple data layers" loading="lazy">
-              </div>
-              <div class="caption">
-                <strong>QGIS Verification</strong>
-                Validation of the processing results in QGIS environment, showing correct overlay of multiple data layers.
-              </div>
-            </div>
-          </div>
-
-          <h3 style="margin-top:2.5rem">Land Cover Classification (ESA WorldCover)</h3>
-          <div class="table-wrapper reveal">
-            <table>
-              <thead>
-                <tr><th>Class</th><th>Description</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>1</td><td>Tree Cover</td></tr>
-                <tr><td>2</td><td>Shrubland</td></tr>
-                <tr><td>3</td><td>Grassland</td></tr>
-                <tr><td>4</td><td>Cropland</td></tr>
-                <tr><td>5</td><td>Built-up</td></tr>
-                <tr><td>6</td><td>Bare / Sparse Vegetation</td></tr>
-                <tr><td>7</td><td>Snow and Ice</td></tr>
-                <tr><td>8</td><td>Open Water</td></tr>
-                <tr><td>9</td><td>Herbaceous Wetland</td></tr>
-                <tr><td>10</td><td>Mangroves</td></tr>
-                <tr><td>11</td><td>Moss and Lichen</td></tr>
-                <tr><td>12</td><td>Permanent Water</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- Bivariate Map -->
-        <section>
-          <div class="section-header reveal">
-            <h2>Bivariate Map &amp; Population Exposure</h2>
-            <p>The bivariate map combines NO2 pollution classes with population density classes for each province.</p>
-          </div>
-
-          <div class="bento reveal">
-            <div class="card item-8" style="padding:2rem">
-              <h3 style="margin-bottom:1rem">5x5 Bivariate Classification</h3>
-              <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:.9rem">Each province is assigned a bivariate code: <strong style="color:var(--text)">Pol_Class x 10 + Pop_Class</strong></p>
-              <div style="display:inline-grid;grid-template-columns:auto repeat(5,40px);grid-template-rows:repeat(5,40px) auto;gap:2px;align-items:center">
-                <div></div>
-                <div style="font-size:.65rem;color:var(--text-secondary);text-align:center;font-weight:500">Pop1</div>
-                <div style="font-size:.65rem;color:var(--text-secondary);text-align:center;font-weight:500">Pop2</div>
-                <div style="font-size:.65rem;color:var(--text-secondary);text-align:center;font-weight:500">Pop3</div>
-                <div style="font-size:.65rem;color:var(--text-secondary);text-align:center;font-weight:500">Pop4</div>
-                <div style="font-size:.65rem;color:var(--text-secondary);text-align:center;font-weight:500">Pop5</div>
-
-                <div style="font-size:.6rem;color:var(--text-secondary);text-align:right;padding-right:6px;font-weight:500">Pol5</div>
-                <div style="background:#50fffd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">51</div>
-                <div style="background:#44d6d4;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">52</div>
-                <div style="background:#3c9fad;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">53</div>
-                <div style="background:#32788f;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">54</div>
-                <div style="background:#2a6682;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.6)">55</div>
-
-                <div style="font-size:.6rem;color:var(--text-secondary);text-align:right;padding-right:6px;font-weight:500">Pol4</div>
-                <div style="background:#7cfffd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">41</div>
-                <div style="background:#64dbdc;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">42</div>
-                <div style="background:#54b5bd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">43</div>
-                <div style="background:#4591a0;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">44</div>
-                <div style="background:#397e8d;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.6)">45</div>
-
-                <div style="font-size:.6rem;color:var(--text-secondary);text-align:right;padding-right:6px;font-weight:500">Pol3</div>
-                <div style="background:#b9fff8;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">31</div>
-                <div style="background:#a4dfd7;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">32</div>
-                <div style="background:#95b6c3;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">33</div>
-                <div style="background:#8a9cad;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.5)">34</div>
-                <div style="background:#7d8ba1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.6)">35</div>
-
-                <div style="font-size:.6rem;color:var(--text-secondary);text-align:right;padding-right:6px;font-weight:500">Pol2</div>
-                <div style="background:#ddfffd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">21</div>
-                <div style="background:#cde6e5;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">22</div>
-                <div style="background:#c3c6cb;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">23</div>
-                <div style="background:#bbc0c7;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">24</div>
-                <div style="background:#adb5bd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.5)">25</div>
-
-                <div style="font-size:.6rem;color:var(--text-secondary);text-align:right;padding-right:6px;font-weight:500">Pol1</div>
-                <div style="background:#fffffe;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">11</div>
-                <div style="background:#ffe8ee;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">12</div>
-                <div style="background:#ffcbd7;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">13</div>
-                <div style="background:#ffaec0;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(0,0,0,.5)">14</div>
-                <div style="background:#ff88a6;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.5)">15</div>
-              </div>
-            </div>
-            <div class="card item-4" style="padding:2rem">
-              <h3 style="margin-bottom:1rem">Legend</h3>
-              <p style="font-size:.88rem;color:var(--text-secondary);line-height:1.7">
-                <strong style="color:var(--text)">Pollution (Pol):</strong><br>
-                1 = &le;10 | 2 = 10-25 | 3 = 25-40 | 4 = 40-50 | 5 = &gt;50 &mu;g/m3
-              </p>
-              <p style="font-size:.88rem;color:var(--text-secondary);line-height:1.7;margin-top:.75rem">
-                <strong style="color:var(--text)">Population (Pop):</strong><br>
-                Quantile-based (5 classes)
-              </p>
-              <p style="font-size:.88rem;color:var(--text-secondary);line-height:1.7;margin-top:.75rem">
-                <strong style="color:var(--text)">Formula:</strong><br>
-                bivariate = pol_class x 10 + pop_class
-              </p>
-            </div>
-          </div>
-
-          <h3 style="margin-top:2.5rem">Population Exposure Summary</h3>
-          <div class="table-wrapper reveal">
+          <h3>Exposure Summary</h3>
+          <div class="table-wrapper compact-table">
             <table>
               <thead>
                 <tr>
-                  <th>Pollution Class</th>
-                  <th class="num">Population (sum)</th>
-                  <th class="num">Percentage</th>
+                  <th>EU Class</th>
+                  <th>Population</th>
+                  <th>%</th>
                 </tr>
               </thead>
-              <tbody id="exposure-table-body">
-              </tbody>
+              <tbody id="no2-exposure-table-body"></tbody>
             </table>
           </div>
-        </section>
 
-        <!-- LCC Statistics -->
-        <section>
-          <div class="section-header reveal">
-            <h2>Land Cover Change Statistics</h2>
-            <p>The LCC analysis categorized each pixel into one of three change types between 2021 and 2023.</p>
-          </div>
-          <div class="table-wrapper reveal">
+          <h3>NO&#8322; LCC Zonal Statistics Detail</h3>
+          <div class="table-wrapper compact-table">
             <table>
               <thead>
-                <tr><th>Category</th><th>Description</th><th>Output File</th></tr>
+                <tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr>
               </thead>
               <tbody>
-                <tr><td><strong>Stable</strong></td><td>No change in land cover class</td><td><code>stable.tif</code></td></tr>
-                <tr><td><strong>Gain</strong></td><td>New built-up area (conversion to built class)</td><td><code>gain.tif</code></td></tr>
-                <tr><td><strong>Loss</strong></td><td>Loss of built-up area (conversion from built class)</td><td><code>loss.tif</code></td></tr>
+                <tr><td>Stable (Built → Built)</td><td>-1.8306</td><td>-4.6435</td><td>-0.4562</td></tr>
+                <tr><td>Gain (→ Built)</td><td>-1.6669</td><td>-2.1515</td><td>-1.1822</td></tr>
+                <tr><td>Loss (Built →)</td><td>-1.9892</td><td>-3.2082</td><td>-1.1281</td></tr>
               </tbody>
             </table>
           </div>
-        </section>
-      </div>
-    </section>
-  </main>
+        </div>
 
-  <footer>
-    <p><strong>GIS Lab Project</strong> - Politecnico di Milano - A.A. 2025/26</p>
-    <p>Data: CAMS, ESA WorldCover, WorldPop, GADM - Built with OpenLayers</p>
-  </footer>
+        <!-- PM2.5 Panel -->
+        <div id="panel-pm2p5" class="pollutant-panel">
+          <div class="result-item">
+            <img
+              src="images/no2_population_pie_chart.png"
+              alt="PM2.5"
+              class="placeholder-img"
+              style="
+                max-height: 350px;
+                object-fit: contain;
+                background: #f9f9f9;
+              "
+            />
+            <div class="caption">
+              <strong>PM2.5 Population Exposure</strong>
+              <span class="data-wait"
+                >&#9203; Replace images/pm2p5_population_pie_chart.png</span
+              >
+            </div>
+          </div>
+          <div class="result-item" style="margin-top: 1.5rem">
+            <img
+              src="images/lcc_amac_bar_chart.png"
+              alt="PM2.5 LCC"
+              class="placeholder-img"
+              style="
+                width: 100%;
+                max-width: 700px;
+                display: block;
+                margin: 0 auto;
+                background: #f9f9f9;
+              "
+            />
+            <div class="caption">
+              <strong>PM2.5 Change by LCC Type</strong>
+              <span class="data-wait"
+                >&#9203; Replace images/pm2p5_lcc_bar_chart.png</span
+              >
+            </div>
+          </div>
 
-  <script src="js/results-data.js"></script>
-  <script src="js/app.js" defer></script>
-  <script>
-  (function(){
-    var tbody=document.getElementById('bivariate-table-body');
-    if(tbody){tbody.innerHTML='';TABLE_BIVARIATE.forEach(function(p){
-      tbody.innerHTML+='<tr><td>'+(p.NAME_1||'')+'</td><td class="num">'+(p.pop_class_median||'')+'</td><td class="num">'+(p.pol_class_max||'')+'</td><td class="num"><strong>'+(p.bivariate||'')+'</strong></td></tr>';
-    });}
-    var tbody2=document.getElementById('exposure-table-body');
-    if(tbody2){tbody2.innerHTML='';TABLE_CHART.sort(function(a,b){return a.pol_class_max-b.pol_class_max});
-      TABLE_CHART.forEach(function(p){
-        var pop=parseFloat(p.pop_sum)||0,pct=parseFloat(p.pop_pct)||0;
-        tbody2.innerHTML+='<tr><td>Class '+(p.pol_class_max||'')+' ('+(p.pol_class_max===1?'&le;10':'10-25')+' &mu;g/m3)</td><td class="num">'+pop.toLocaleString()+'</td><td class="num">'+pct+'%</td></tr>';
-      });
-    }
-  })();
-  </script>
-</body>
+          <h3>PM2.5 LCC Zonal Statistics Detail</h3>
+          <div class="table-wrapper compact-table">
+            <table>
+              <thead>
+                <tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Zone 1</td><td>-1.4828</td><td>-2.2578</td><td>-0.5185</td></tr>
+                <tr><td>Zone 2</td><td>-1.5108</td><td>-2.2578</td><td>-0.5187</td></tr>
+                <tr><td>Zone 3</td><td>-1.5644</td><td>-2.2578</td><td>-0.5185</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PM10 Panel -->
+        <div id="panel-pm10" class="pollutant-panel">
+          <div class="result-item">
+            <img
+              src="images/no2_population_pie_chart.png"
+              alt="PM10"
+              class="placeholder-img"
+              style="
+                max-height: 350px;
+                object-fit: contain;
+                background: #f9f9f9;
+              "
+            />
+            <div class="caption">
+              <strong>PM10 Population Exposure</strong>
+              <span class="data-wait"
+                >&#9203; Replace images/pm10_population_pie_chart.png</span
+              >
+            </div>
+          </div>
+          <div class="result-item" style="margin-top: 1.5rem">
+            <img
+              src="images/lcc_amac_bar_chart.png"
+              alt="PM10 LCC"
+              class="placeholder-img"
+              style="
+                width: 100%;
+                max-width: 700px;
+                display: block;
+                margin: 0 auto;
+                background: #f9f9f9;
+              "
+            />
+            <div class="caption">
+              <strong>PM10 Change by LCC Type</strong>
+              <span class="data-wait"
+                >&#9203; Replace images/pm10_lcc_bar_chart.png</span
+              >
+            </div>
+          </div>
+
+          <h3>PM10 LCC Zonal Statistics Detail</h3>
+          <div class="table-wrapper compact-table">
+            <table>
+              <thead>
+                <tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Zone -1 (NoData)</td><td>-1.3079</td><td>-2.8561</td><td>0.9198</td></tr>
+                <tr><td>Zone 1</td><td>-1.6533</td><td>-2.8373</td><td>0.9198</td></tr>
+                <tr><td>Zone 2</td><td>-1.5272</td><td>-2.8375</td><td>0.9198</td></tr>
+                <tr><td>Zone 3</td><td>-1.4873</td><td>-2.8372</td><td>0.9198</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== LCC ===== -->
+      <section style="border-top: 3px solid #f8c630; padding-top: 2rem">
+        <h2>Land Cover Change (2021&#8594;2023)</h2>
+        <p>Built area change detection using ESA WorldCover 10m data.</p>
+
+        <div class="summary-cards">
+          <div class="summary-card">
+            <div class="value">95.74%</div>
+            <div class="label">Stability (Persistence)</div>
+          </div>
+          <div class="summary-card">
+            <div class="value">63.77%</div>
+            <div class="label">Primary Gain: Class 5 &#8594; Built</div>
+          </div>
+          <div class="summary-card">
+            <div class="value">63.78%</div>
+            <div class="label">Primary Loss: Built &#8594; Class 5</div>
+          </div>
+        </div>
+
+        <h3>Transition Contingency Table</h3>
+        <p>
+          Based on LCC contingency matrix for
+          <strong>Built Area (Class 7)</strong>. LCC code format:
+          <em>(2021_class &#215; 100) + 2023_class</em>.
+        </p>
+        <div class="table-wrapper compact-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Indicator</th>
+                <th>Value (%)</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Stability (Persistence)</td>
+                <td><strong>95.74%</strong></td>
+                <td>N/A (Baseline)</td>
+              </tr>
+              <tr>
+                <td>Primary Source of Gain</td>
+                <td><strong>63.77%</strong></td>
+                <td>Class 5 &#8594; Built Area (507)</td>
+              </tr>
+              <tr>
+                <td>2nd Source of Gain</td>
+                <td><strong>20.57%</strong></td>
+                <td>Class 2 &#8594; Built Area (207)</td>
+              </tr>
+              <tr>
+                <td>3rd Source of Gain</td>
+                <td><strong>9.87%</strong></td>
+                <td>Class 11 &#8594; Built Area (1107)</td>
+              </tr>
+              <tr>
+                <td>Primary Destination of Loss</td>
+                <td><strong>63.78%</strong></td>
+                <td>Built Area &#8594; Class 5 (705)</td>
+              </tr>
+              <tr>
+                <td>2nd Destination of Loss</td>
+                <td><strong>14.10%</strong></td>
+                <td>Built Area &#8594; Class 11 (711)</td>
+              </tr>
+              <tr>
+                <td>3rd Destination of Loss</td>
+                <td><strong>12.42%</strong></td>
+                <td>Built Area &#8594; Class 2 (702)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="font-size: 0.8rem; color: #999">
+          LCC = (2021_class &#215; 100) + 2023_class. All AMAC values negative =
+          NO&#8322; decreased across Netherlands 2021&#8594;2023. Built Area =
+          Class 7.
+        </p>
+      </section>
+    </div>
+
+    <footer>
+      <p>
+        <strong>GIS Lab Project</strong> &mdash; Politecnico di Milano &mdash;
+        A.A. 2025/26
+      </p>
+      <p>
+        Data: CAMS, ESA WorldCover, WorldPop, GADM &mdash; Built with OpenLayers
+      </p>
+    </footer>
+
+    <script src="js/results-data.js"></script>
+    <script>
+      function switchPollutantTab(poll) {
+        var tabs = document.querySelectorAll(".pollutant-tabs .tab");
+        var panels = document.querySelectorAll(".pollutant-panel");
+        for (var i = 0; i < tabs.length; i++)
+          tabs[i].classList.remove("active");
+        for (var i = 0; i < panels.length; i++)
+          panels[i].classList.remove("active");
+        if (poll === "no2") tabs[0].classList.add("active");
+        else if (poll === "pm2p5") tabs[1].classList.add("active");
+        else if (poll === "pm10") tabs[2].classList.add("active");
+        document.getElementById("panel-" + poll).classList.add("active");
+      }
+
+      (function () {
+        var tb = document.getElementById("no2-bivariate-table-body");
+        if (
+          tb &&
+          typeof TABLE_BIVARIATE !== "undefined" &&
+          TABLE_BIVARIATE.length > 0
+        ) {
+          tb.innerHTML = "";
+          for (var i = 0; i < TABLE_BIVARIATE.length; i++) {
+            var p = TABLE_BIVARIATE[i];
+            tb.innerHTML +=
+              "<tr><td>" +
+              (p.NAME_1 || "") +
+              "</td><td>" +
+              (p.pop_class_median || "") +
+              "</td><td>" +
+              (p.pol_class_max || "") +
+              "</td><td><strong>" +
+              (p.bivariate || "") +
+              "</strong></td></tr>";
+          }
+        }
+        var te = document.getElementById("no2-exposure-table-body");
+        if (
+          te &&
+          typeof TABLE_CHART !== "undefined" &&
+          TABLE_CHART.length > 0
+        ) {
+          te.innerHTML = "";
+          TABLE_CHART.sort(function (a, b) {
+            return a.pol_class_max - b.pol_class_max;
+          });
+          for (var i = 0; i < TABLE_CHART.length; i++) {
+            var p = TABLE_CHART[i];
+            te.innerHTML +=
+              "<tr><td>Class " +
+              (p.pol_class_max || "") +
+              " (" +
+              (p.pol_class_max === 1 ? "&le;10" : "10-25") +
+              " &mu;g/m&sup3;)</td><td>" +
+              (parseFloat(p.pop_sum) || 0).toLocaleString() +
+              "</td><td>" +
+              (parseFloat(p.pop_pct) || 0) +
+              "%</td></tr>";
+          }
+        }
+      })();
+
+      (function () {
+        var tb = document.getElementById("lcc-zonal-table-body");
+        if (
+          tb &&
+          typeof LCC_ZONAL_STATS !== "undefined" &&
+          LCC_ZONAL_STATS.length > 0
+        ) {
+          tb.innerHTML = "";
+          LCC_ZONAL_STATS.sort(function (a, b) {
+            return a.code - b.code;
+          });
+          for (var i = 0; i < LCC_ZONAL_STATS.length; i++) {
+            var d = LCC_ZONAL_STATS[i];
+            tb.innerHTML +=
+              "<tr><td>" +
+              d.code +
+              "</td><td>" +
+              d.transition +
+              "</td><td>" +
+              d.count +
+              "</td><td>" +
+              d.mean.toFixed(4) +
+              "</td><td>" +
+              d.min.toFixed(4) +
+              "</td><td>" +
+              d.max.toFixed(4) +
+              "</td></tr>";
+          }
+        }
+      })();
+    </script>
+  </body>
 </html>
