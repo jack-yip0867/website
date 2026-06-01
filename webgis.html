@@ -54,24 +54,18 @@
 
             <div class="separator"></div>
 
-            <span class="student-label">songjiwei</span>
-            <label><input type="checkbox" id="chk-s1-bivariate" checked onchange="toggleStudentLayer(1, 'bivariate', this.checked)"> Bivariate</label>
-            <label><input type="checkbox" id="chk-s1-province" checked onchange="toggleStudentLayer(1, 'province', this.checked)"> Province</label>
-            <label><input type="checkbox" id="chk-s1-dissolved" checked onchange="toggleStudentLayer(1, 'dissolved', this.checked)"> NO2</label>
+            <span class="student-label">songjiwei (NO₂)</span>
+            <label><input type="checkbox" id="chk-s1" checked onchange="toggleStudentLayer(1, this.checked)"> Bivariate</label>
 
             <div class="separator"></div>
 
-            <span class="student-label">zhangzihao</span>
-            <label><input type="checkbox" id="chk-s2-bivariate" checked onchange="toggleStudentLayer(2, 'bivariate', this.checked)"> Bivariate</label>
-            <label><input type="checkbox" id="chk-s2-province" checked onchange="toggleStudentLayer(2, 'province', this.checked)"> Province</label>
-            <label><input type="checkbox" id="chk-s2-dissolved" checked onchange="toggleStudentLayer(2, 'dissolved', this.checked)"> PM2.5</label>
+            <span class="student-label">zhangzihao (PM2.5)</span>
+            <label><input type="checkbox" id="chk-s2" checked onchange="toggleStudentLayer(2, this.checked)"> Bivariate</label>
 
             <div class="separator"></div>
 
-            <span class="student-label">yehongjie</span>
-            <label><input type="checkbox" id="chk-s3-bivariate" checked onchange="toggleStudentLayer(3, 'bivariate', this.checked)"> Bivariate</label>
-            <label><input type="checkbox" id="chk-s3-province" checked onchange="toggleStudentLayer(3, 'province', this.checked)"> Province</label>
-            <label><input type="checkbox" id="chk-s3-dissolved" checked onchange="toggleStudentLayer(3, 'dissolved', this.checked)"> PM10</label>
+            <span class="student-label">yehongjie (PM10)</span>
+            <label><input type="checkbox" id="chk-s3" checked onchange="toggleStudentLayer(3, this.checked)"> Bivariate</label>
 
             <div class="separator"></div>
         </div>
@@ -80,23 +74,22 @@
 
         <div id="legend-panel">
             <h4>Map Legend</h4>
-            <div class="legend-section">
-                <h5>NO&#8322;-Population Bivariate</h5>
-                <div id="biv-legend-content"></div>
+            <div id="legend-wrap-s1" class="legend-section">
+                <h5>songjiwei &mdash; NO&#8322; Bivariate</h5>
+                <img id="legend-img-s1" alt="NO2 Bivariate Legend" style="max-width:220px;height:auto;">
             </div>
-            <div class="legend-section">
-                <h5>Province Boundaries</h5>
-                <div class="legend-item"><span class="legend-color" style="background:rgba(44,110,73,0.08);border:1.5px solid #2d3436;"></span> Province outline</div>
+            <div id="legend-wrap-s2" class="legend-section">
+                <h5>zhangzihao &mdash; PM2.5 Bivariate</h5>
+                <img id="legend-img-s2" alt="PM2.5 Bivariate Legend" style="max-width:220px;height:auto;">
             </div>
-            <div class="legend-section">
-                <h5>NO&#8322; Dissolved Zones</h5>
-                <div id="pol-legend-content"></div>
+            <div id="legend-wrap-s3" class="legend-section">
+                <h5>yehongjie &mdash; PM10 Bivariate</h5>
+                <img id="legend-img-s3" alt="PM10 Bivariate Legend" style="max-width:220px;height:auto;">
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.5.2/dist/ol.min.js"></script>
-    <script src="js/results-data.js"></script>
     <script src="js/webgis.js"></script>
     <script src="js/app.js" defer></script>
 </body>
