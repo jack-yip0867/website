@@ -6,13 +6,13 @@
     <title>Results - Netherlands Air Quality Monitoring</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .pollutant-tabs { display: flex; gap: 0; margin: 1.5rem 0; border-bottom: 3px solid var(--primary); }
+        .pollutant-tabs { display: flex; gap: 0; margin: 1.5rem 0; border-bottom: 3px solid #2c6e49; }
         .pollutant-tabs .tab {
             padding: 0.6rem 1.5rem; cursor: default; font-weight: 600; font-size: 0.95rem;
-            border-radius: 6px 6px 0 0; background: var(--light-gray); color: var(--gray);
+            border-radius: 6px 6px 0 0; background: #dfe6e9; color: #636e72;
             border: none; margin-right: 3px;
         }
-        .pollutant-tabs .tab.active { background: var(--primary); color: white; }
+        .pollutant-tabs .tab.active { background: #2c6e49; color: white; }
         .pollutant-tabs .tab .badge { font-size: 0.7rem; opacity: 0.7; font-weight: 400; }
         .pollutant-panel { display: none; }
         .pollutant-panel.active { display: block; }
@@ -21,9 +21,9 @@
         .placeholder-img { opacity: 0.35; filter: grayscale(1); }
         .data-wait { color: #e65100; font-size: 0.85rem; font-style: italic; }
         .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0; }
-        .summary-card { background: var(--white); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); text-align: center; }
-        .summary-card .value { font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); }
-        .summary-card .label { font-size: 0.8rem; color: var(--gray); margin-top: 0.2rem; }
+        .summary-card { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 15px rgba(0,0,0,0.08); text-align: center; }
+        .summary-card .value { font-size: 1.5rem; font-weight: 800; color: #1e4d32; }
+        .summary-card .label { font-size: 0.8rem; color: #636e72; margin-top: 0.2rem; }
         .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         @media (max-width: 768px) { .mini-grid { grid-template-columns: 1fr; } }
     </style>
@@ -125,10 +125,6 @@
                     <div class="caption"><strong>PM10 Change by LCC Type</strong> <span class="data-wait">&#9203; Replace images/pm10_lcc_bar_chart.png</span></div>
                 </div>
             </div>
-                    </div>
-                </div>
-                <p class="data-wait" style="text-align:center;padding:1rem;">Data will appear once teammates provide PM10 GeoJSON files</p>
-            </div>
         </section>
 
         <!-- ===== LCC ===== -->
@@ -180,43 +176,46 @@
 
     <script src="js/results-data.js"></script>
     <script>
-    // Pollutant tab switcher
     function switchPollutantTab(poll) {
-        document.querySelectorAll('.pollutant-tabs .tab').forEach(function(t){ t.classList.remove('active'); });
-        document.querySelectorAll('.pollutant-panel').forEach(function(p){ p.classList.remove('active'); });
-        var tabBtns = document.querySelectorAll('.pollutant-tabs .tab');
-        if (poll === 'no2') tabBtns[0].classList.add('active');
-        else if (poll === 'pm2p5') tabBtns[1].classList.add('active');
-        else if (poll === 'pm10') tabBtns[2].classList.add('active');
+        var tabs = document.querySelectorAll('.pollutant-tabs .tab');
+        var panels = document.querySelectorAll('.pollutant-panel');
+        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+        for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+        if (poll === 'no2') tabs[0].classList.add('active');
+        else if (poll === 'pm2p5') tabs[1].classList.add('active');
+        else if (poll === 'pm10') tabs[2].classList.add('active');
         document.getElementById('panel-' + poll).classList.add('active');
     }
 
-    // NO2 tables
     (function() {
         var tb = document.getElementById('no2-bivariate-table-body');
-        if (tb && TABLE_BIVARIATE.length > 0) {
+        if (tb && typeof TABLE_BIVARIATE !== 'undefined' && TABLE_BIVARIATE.length > 0) {
             tb.innerHTML = '';
-            TABLE_BIVARIATE.forEach(function(p) {
+            for (var i = 0; i < TABLE_BIVARIATE.length; i++) {
+                var p = TABLE_BIVARIATE[i];
                 tb.innerHTML += '<tr><td>' + (p.NAME_1||'') + '</td><td>' + (p.pop_class_median||'') + '</td><td>' + (p.pol_class_max||'') + '</td><td><strong>' + (p.bivariate||'') + '</strong></td></tr>';
-            });
+            }
         }
         var te = document.getElementById('no2-exposure-table-body');
-        if (te && TABLE_CHART.length > 0) {
+        if (te && typeof TABLE_CHART !== 'undefined' && TABLE_CHART.length > 0) {
             te.innerHTML = '';
-            TABLE_CHART.sort(function(a,b){return a.pol_class_max-b.pol_class_max;}).forEach(function(p) {
+            TABLE_CHART.sort(function(a,b){return a.pol_class_max-b.pol_class_max;});
+            for (var i = 0; i < TABLE_CHART.length; i++) {
+                var p = TABLE_CHART[i];
                 te.innerHTML += '<tr><td>Class ' + (p.pol_class_max||'') + ' (' + (p.pol_class_max===1?'&le;10':'10-25') + ' &mu;g/m&sup3;)</td><td>' + (parseFloat(p.pop_sum)||0).toLocaleString() + '</td><td>' + (parseFloat(p.pop_pct)||0) + '%</td></tr>';
-            });
+            }
         }
     })();
 
-    // LCC zonal stats table
     (function() {
         var tb = document.getElementById('lcc-zonal-table-body');
         if (tb && typeof LCC_ZONAL_STATS !== 'undefined' && LCC_ZONAL_STATS.length > 0) {
             tb.innerHTML = '';
-            LCC_ZONAL_STATS.sort(function(a,b){return a.code-b.code;}).forEach(function(d) {
+            LCC_ZONAL_STATS.sort(function(a,b){return a.code-b.code;});
+            for (var i = 0; i < LCC_ZONAL_STATS.length; i++) {
+                var d = LCC_ZONAL_STATS[i];
                 tb.innerHTML += '<tr><td>' + d.code + '</td><td>' + d.transition + '</td><td>' + d.count + '</td><td>' + d.mean.toFixed(4) + '</td><td>' + d.min.toFixed(4) + '</td><td>' + d.max.toFixed(4) + '</td></tr>';
-            });
+            }
         }
     })();
     </script>
