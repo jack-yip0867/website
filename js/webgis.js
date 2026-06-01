@@ -15,8 +15,8 @@ var WORKSPACE = 'gisgeoserver_02';
 // --- Student layer config ---
 var STUDENTS = {
     1: { layer: 'songjiwei_bivariate', name: 'songjiwei', pollutant: 'NO₂' },
-    2: { layer: 'Netherlands_pm2p5_2023_bivariate', name: 'zhangzihao', pollutant: 'PM2.5' },
-    3: { layer: 'yhj_bivariate', name: 'yehongjie', pollutant: 'PM10' }
+    2: { layer: 'zhangzihao_bivariate', name: 'zhangzihao', pollutant: 'PM2.5' },
+    3: { layer: 'yehongjie_bivariate', name: 'yehongjie', pollutant: 'PM10' }
 };
 
 // --- Basemaps ---
@@ -56,8 +56,7 @@ var studentSources = {};
     var source = new ol.source.TileWMS({
         url: GEOSERVER_WMS,
         params: {
-            LAYERS: WORKSPACE + ':' + cfg.layer,
-            TILED: true
+            LAYERS: WORKSPACE + ':' + cfg.layer
         },
         serverType: 'geoserver',
         transition: 0
