@@ -157,22 +157,24 @@
             <p>Built area change detection using ESA WorldCover 10m data.</p>
 
             <div class="summary-cards">
-                <div class="summary-card"><div class="value">96.99%</div><div class="label">Stability (Persistence)</div></div>
-                <div class="summary-card"><div class="value">61.76%</div><div class="label">Primary Gain: Crops &#8594; Built</div></div>
-                <div class="summary-card"><div class="value">60.98%</div><div class="label">Primary Loss: Built &#8594; Crops</div></div>
+                <div class="summary-card"><div class="value">95.74%</div><div class="label">Stability (Persistence)</div></div>
+                <div class="summary-card"><div class="value">63.77%</div><div class="label">Primary Gain: Class 5 &#8594; Built</div></div>
+                <div class="summary-card"><div class="value">63.78%</div><div class="label">Primary Loss: Built &#8594; Class 5</div></div>
             </div>
 
             <h3>Transition Contingency Table</h3>
+            <p>Based on LCC contingency matrix for <strong>Built Area (Class 7)</strong>. LCC code format: <em>(2021_class &#215; 100) + 2023_class</em>.</p>
             <div class="table-wrapper compact-table">
                 <table>
                     <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th></tr></thead>
                     <tbody>
-                        <tr><td>Stability (Persistence)</td><td><strong>96.99%</strong></td><td>N/A (Baseline)</td></tr>
-                        <tr><td>Primary Source of Gain</td><td><strong>61.76%</strong></td><td>Crops &#8594; Built Area (705)</td></tr>
-                        <tr><td>2nd Source of Gain</td><td><strong>10.25%</strong></td><td>Shrub &#8594; Built Area (702)</td></tr>
-                        <tr><td>3rd Source of Gain</td><td><strong>9.52%</strong></td><td>Water &#8594; Built Area (701)</td></tr>
-                        <tr><td>Primary Destination of Loss</td><td><strong>60.98%</strong></td><td>Built Area &#8594; Crops (507)</td></tr>
-                        <tr><td>2nd Destination of Loss</td><td><strong>21.12%</strong></td><td>Built Area &#8594; Trees (207)</td></tr>
+                        <tr><td>Stability (Persistence)</td><td><strong>95.74%</strong></td><td>N/A (Baseline)</td></tr>
+                        <tr><td>Primary Source of Gain</td><td><strong>63.77%</strong></td><td>Class 5 &#8594; Built Area (507)</td></tr>
+                        <tr><td>2nd Source of Gain</td><td><strong>20.57%</strong></td><td>Class 2 &#8594; Built Area (207)</td></tr>
+                        <tr><td>3rd Source of Gain</td><td><strong>9.87%</strong></td><td>Class 11 &#8594; Built Area (1107)</td></tr>
+                        <tr><td>Primary Destination of Loss</td><td><strong>63.78%</strong></td><td>Built Area &#8594; Class 5 (705)</td></tr>
+                        <tr><td>2nd Destination of Loss</td><td><strong>14.10%</strong></td><td>Built Area &#8594; Class 11 (711)</td></tr>
+                        <tr><td>3rd Destination of Loss</td><td><strong>12.42%</strong></td><td>Built Area &#8594; Class 2 (702)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -184,7 +186,7 @@
                     <tbody id="lcc-zonal-table-body"><tr><td colspan="6" style="text-align:center;">Loading...</td></tr></tbody>
                 </table>
             </div>
-            <p style="font-size:0.8rem;color:#999;">LCC = 2023_class &#215; 100 + 2021_class. All AMAC values negative = NO&#8322; decreased across Netherlands 2021&#8594;2023.</p>
+            <p style="font-size:0.8rem;color:#999;">LCC = (2021_class &#215; 100) + 2023_class. All AMAC values negative = NO&#8322; decreased across Netherlands 2021&#8594;2023. Built Area = Class 7.</p>
         </section>
     </div>
 
