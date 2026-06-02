@@ -188,10 +188,12 @@
         opacity: 0.7;
         font-weight: 400;
       }
-      .pollutant-panel {
+      .pollutant-panel,
+      .lcc-panel {
         display: none;
       }
-      .pollutant-panel.active {
+      .pollutant-panel.active,
+      .lcc-panel.active {
         display: block;
       }
       .compact-table {
@@ -439,34 +441,78 @@
       <!-- ===== LCC ===== -->
       <section style="border-top: 3px solid #f8c630; padding-top: 2rem">
         <h2>Land Cover Change (2021&#8594;2023)</h2>
-        <p>Built area change detection using ESA WorldCover 10m data.</p>
+        <p>Land cover transition analysis using ESA WorldCover 10m data. Each student focused on a different land cover class.</p>
 
-        <div class="summary-cards">
-          <div class="summary-card">
-            <div class="value">95.74%</div>
-            <div class="label">Stability (Persistence)</div>
+        <div class="pollutant-tabs">
+          <button class="tab lcc-tab active" onclick="switchLccTab('built')">Built Area <span class="badge">Student A</span></button>
+          <button class="tab lcc-tab" onclick="switchLccTab('trees')">Trees <span class="badge">Student B</span></button>
+          <button class="tab lcc-tab" onclick="switchLccTab('crops')">Crops <span class="badge">Student C</span></button>
+        </div>
+
+        <!-- Built Area (Student A) -->
+        <div id="lcc-built" class="lcc-panel active">
+          <div class="summary-cards">
+            <div class="summary-card"><div class="value">95.74%</div><div class="label">Stability (0.83 sq.deg)</div></div>
+            <div class="summary-card"><div class="value">63.77%</div><div class="label">Gain: Class 5 → Built (507), 0.052 sq.deg</div></div>
+            <div class="summary-card"><div class="value">63.78%</div><div class="label">Loss: Built → Class 5 (705), 0.024 sq.deg</div></div>
           </div>
-          <div class="summary-card">
-            <div class="value">63.77%</div>
-            <div class="label">Primary Gain: Class 5 &#8594; Built</div>
-          </div>
-          <div class="summary-card">
-            <div class="value">63.78%</div>
-            <div class="label">Primary Loss: Built &#8594; Class 5</div>
+          <div class="table-wrapper compact-table">
+            <table>
+              <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th><th>Area (sq.deg)</th></tr></thead>
+              <tbody>
+                <tr><td>Stability (Persistence)</td><td><strong>95.74%</strong></td><td>Built → Built</td><td>0.8306</td></tr>
+                <tr><td>Primary Source of Gain</td><td><strong>63.77%</strong></td><td>Class 5 → Built (507)</td><td>0.0521</td></tr>
+                <tr><td>2nd Source of Gain</td><td><strong>20.57%</strong></td><td>Class 2 → Built (207)</td><td>0.0168</td></tr>
+                <tr><td>Primary Destination of Loss</td><td><strong>63.78%</strong></td><td>Built → Class 5 (705)</td><td>0.0236</td></tr>
+                <tr><td>2nd Destination of Loss</td><td><strong>14.10%</strong></td><td>Built → Class 11 (711)</td><td>0.0052</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <h3>Transition Contingency Table</h3>
-        <p>
-          Based on LCC contingency matrix for
-          <strong>Built Area (Class 7)</strong>. LCC code format:
-          <em>(2021_class &#215; 100) + 2023_class</em>.
-        </p>
-        <div class="table-wrapper compact-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Indicator</th>
+        <!-- Trees (Student B) -->
+        <div id="lcc-trees" class="lcc-panel">
+          <div class="summary-cards">
+            <div class="summary-card"><div class="value">90.64%</div><div class="label">Stability (0.50 sq.deg)</div></div>
+            <div class="summary-card"><div class="value">56.25%</div><div class="label">Gain: Class 5 → Trees (502), 0.023 sq.deg</div></div>
+            <div class="summary-card"><div class="value">32.61%</div><div class="label">Loss: Trees → Built (207), 0.017 sq.deg</div></div>
+          </div>
+          <div class="table-wrapper compact-table">
+            <table>
+              <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th><th>Area (sq.deg)</th></tr></thead>
+              <tbody>
+                <tr><td>Stability (Persistence)</td><td><strong>90.64%</strong></td><td>Trees → Trees</td><td>0.4993</td></tr>
+                <tr><td>Primary Source of Gain</td><td><strong>56.25%</strong></td><td>Class 5 → Trees (502)</td><td>0.0231</td></tr>
+                <tr><td>2nd Source of Gain</td><td><strong>24.91%</strong></td><td>Class 11 → Trees (1102)</td><td>0.0102</td></tr>
+                <tr><td>Primary Destination of Loss</td><td><strong>32.61%</strong></td><td>Trees → Built (207)</td><td>0.0168</td></tr>
+                <tr><td>2nd Destination of Loss</td><td><strong>32.24%</strong></td><td>Trees → Crops (205)</td><td>0.0166</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Crops (Student C) -->
+        <div id="lcc-crops" class="lcc-panel">
+          <div class="summary-cards">
+            <div class="summary-card"><div class="value">95.33%</div><div class="label">Stability (2.57 sq.deg)</div></div>
+            <div class="summary-card"><div class="value">41.36%</div><div class="label">Gain: Class 11 → Crops (1105), 0.033 sq.deg</div></div>
+            <div class="summary-card"><div class="value">41.52%</div><div class="label">Loss: Crops → Built (507), 0.052 sq.deg</div></div>
+          </div>
+          <div class="table-wrapper compact-table">
+            <table>
+              <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th><th>Area (sq.deg)</th></tr></thead>
+              <tbody>
+                <tr><td>Stability (Persistence)</td><td><strong>95.33%</strong></td><td>Crops → Crops</td><td>2.5668</td></tr>
+                <tr><td>Primary Source of Gain</td><td><strong>41.36%</strong></td><td>Class 11 → Crops (1105)</td><td>0.0332</td></tr>
+                <tr><td>2nd Source of Gain</td><td><strong>29.37%</strong></td><td>Built → Crops (705)</td><td>0.0236</td></tr>
+                <tr><td>Primary Destination of Loss</td><td><strong>41.52%</strong></td><td>Crops → Built (507)</td><td>0.0521</td></tr>
+                <tr><td>2nd Destination of Loss</td><td><strong>34.62%</strong></td><td>Crops → Class 11 (511)</td><td>0.0435</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
                 <th>Value (%)</th>
                 <th>Category</th>
               </tr>
@@ -531,6 +577,16 @@
 
     <script src="js/results-data.js"></script>
     <script>
+      function switchLccTab(lcc) {
+        var tabs = document.querySelectorAll('.lcc-tab');
+        var panels = document.querySelectorAll('.lcc-panel');
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        panels.forEach(function(p){ p.classList.remove('active'); });
+        if (lcc === 'built') tabs[0].classList.add('active');
+        else if (lcc === 'trees') tabs[1].classList.add('active');
+        else if (lcc === 'crops') tabs[2].classList.add('active');
+        document.getElementById('lcc-' + lcc).classList.add('active');
+      }
       function switchPollutantTab(poll) {
         var tabs = document.querySelectorAll(".pollutant-tabs .tab");
         var panels = document.querySelectorAll(".pollutant-panel");
