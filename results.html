@@ -1,383 +1,212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Results - Netherlands Air Quality Monitoring</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family:
-          "Segoe UI",
-          -apple-system,
-          BlinkMacSystemFont,
-          sans-serif;
-        line-height: 1.7;
-        color: #2d3436;
-        background: #f8f9fa;
-      }
-      nav {
-        background: #1e4d32;
-        padding: 0 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      }
-      nav .logo {
-        color: #fff;
-        font-size: 1.3rem;
-        font-weight: 700;
-        padding: 1rem 0;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      nav .logo span {
-        color: #f8c630;
-      }
-      nav ul {
-        list-style: none;
-        display: flex;
-        gap: 0.25rem;
-      }
-      nav ul li a {
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-        padding: 1rem 1.25rem;
-        display: block;
-        font-size: 0.95rem;
-        border-radius: 4px 4px 0 0;
-      }
-      nav ul li a:hover,
-      nav ul li a.active:hover {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.12);
-      }
-      nav ul li a.active {
-        background: #fff;
-        color: #1e4d32;
-        font-weight: 600;
-      }
-      nav ul li a.active:hover {
-        background: #fff;
-        color: #1e4d32;
-      }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-      section {
-        padding: 3rem 0;
-      }
-      section h2 {
-        font-size: 2rem;
-        color: #1e4d32;
-        margin-bottom: 1.5rem;
-        position: relative;
-        padding-bottom: 0.5rem;
-      }
-      section h2::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 60px;
-        height: 3px;
-        background: #f8c630;
-      }
-      section h3 {
-        font-size: 1.3rem;
-        color: #2c6e49;
-        margin: 1.5rem 0 0.75rem;
-      }
-      .result-item {
-        background: #fff;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-      }
-      .result-item img {
-        width: 100%;
-        height: auto;
-        display: block;
-        border-bottom: 1px solid #dfe6e9;
-      }
-      .result-item .caption {
-        padding: 1rem 1.25rem;
-        font-size: 0.9rem;
-        color: #636e72;
-      }
-      .result-item .caption strong {
-        color: #2d3436;
-        display: block;
-        margin-bottom: 0.25rem;
-        font-size: 1rem;
-      }
-      .table-wrapper {
-        overflow-x: auto;
-        margin: 1.5rem 0;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #fff;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-      }
-      thead {
-        background: #2c6e49;
-        color: #fff;
-      }
-      th,
-      td {
-        padding: 0.75rem 1rem;
-        text-align: left;
-        font-size: 0.9rem;
-      }
-      tbody tr:nth-child(even) {
-        background: #f1f8f4;
-      }
-      tbody tr:hover {
-        background: #e6f0ea;
-      }
-      footer {
-        background: #2d3436;
-        color: rgba(255, 255, 255, 0.7);
-        text-align: center;
-        padding: 2rem;
-        font-size: 0.85rem;
-        margin-top: 3rem;
-      }
-      footer strong {
-        color: #fff;
-      }
-      .pollutant-tabs {
-        display: flex;
-        gap: 0;
-        margin: 1.5rem 0;
-        border-bottom: 3px solid #2c6e49;
-      }
-      .pollutant-tabs .tab {
-        padding: 0.6rem 1.5rem;
-        cursor: default;
-        font-weight: 600;
-        font-size: 0.95rem;
-        border-radius: 6px 6px 0 0;
-        background: #dfe6e9;
-        color: #636e72;
-        border: none;
-        margin-right: 3px;
-      }
-      .pollutant-tabs .tab.active {
-        background: #2c6e49;
-        color: white;
-      }
-      .pollutant-tabs .tab .badge {
-        font-size: 0.7rem;
-        opacity: 0.7;
-        font-weight: 400;
-      }
-      .pollutant-panel,
-      .lcc-panel {
-        display: none;
-      }
-      .pollutant-panel.active,
-      .lcc-panel.active {
-        display: block;
-      }
-      .compact-table {
-        font-size: 0.85rem;
-      }
-      .compact-table td,
-      .compact-table th {
-        padding: 0.5rem 0.75rem;
-      }
-      .placeholder-img {
-        opacity: 0.35;
-        filter: grayscale(1);
-      }
-      .data-wait {
-        color: #e65100;
-        font-size: 0.85rem;
-        font-style: italic;
-      }
-      .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-        margin: 1rem 0;
-      }
-      .summary-card {
-        background: white;
-        border-radius: 8px;
-        padding: 1rem;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-        text-align: center;
-      }
-      .summary-card .value {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #1e4d32;
-      }
-      .summary-card .label {
-        font-size: 0.8rem;
-        color: #636e72;
-        margin-top: 0.2rem;
-      }
-      @media (max-width: 768px) {
-        nav {
-          flex-direction: column;
-          padding: 0 1rem;
-        }
-        nav ul {
-          width: 100%;
-        }
-        nav ul li a {
-          padding: 0.75rem 1rem;
-          text-align: center;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <nav>
-      <a href="index.html" class="logo">&#127758; Air<span>Quality</span> NL</a>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="results.html" class="active">Results</a></li>
-        <li><a href="webgis.html">WebGIS</a></li>
-        <li><a href="data.html">Data & Methods</a></li>
-      </ul>
-    </nav>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GIS lab results including NO2, PM2.5, PM10 concentration maps, population exposure, and land cover change analysis.">
+  <title>Results - Netherlands Air Quality Monitoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Tabs */
+    .pollutant-tabs {
+      display: flex;
+      gap: 0;
+      margin: 1.5rem 0;
+      border-bottom: 3px solid var(--green-600);
+    }
+    .pollutant-tabs .tab {
+      padding: .6rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .95rem;
+      border-radius: 6px 6px 0 0;
+      background: var(--slate-200);
+      color: var(--slate-500);
+      border: none;
+      margin-right: 3px;
+      font-family: var(--font-body);
+      transition: background .2s, color .2s;
+    }
+    .pollutant-tabs .tab:hover { background: var(--slate-100); color: var(--text); }
+    .pollutant-tabs .tab[aria-selected="true"] {
+      background: var(--green-600);
+      color: #fff;
+    }
+    .pollutant-panel, .lcc-panel { display: none; }
+    .pollutant-panel.active, .lcc-panel.active { display: block; }
 
+    /* Result items */
+    .result-item {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--slate-200);
+      margin-bottom: 2rem;
+    }
+    .result-item .chart-pie {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      display: block;
+      background: var(--white);
+    }
+    .result-item .chart-bar {
+      width: 100%;
+      max-width: 720px;
+      display: block;
+      margin: 0 auto;
+      background: var(--white);
+    }
+    .result-item .caption {
+      padding: 1.25rem 1.5rem;
+      font-size: .9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .result-item .caption strong {
+      display: block;
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: .3rem;
+      font-family: var(--font-display);
+    }
+
+    /* Tables */
+    .compact-table { font-size: .85rem; margin-top: .5rem; }
+    .compact-table td, .compact-table th { padding: .5rem .75rem; }
+
+    /* Summary cards */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .summary-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--slate-200);
+      text-align: center;
+    }
+    .summary-card .value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--green-600);
+    }
+    .summary-card .label {
+      font-size: .82rem;
+      color: var(--text-secondary);
+      margin-top: .3rem;
+    }
+
+    /* Section divider */
+    .section-divider {
+      border-top: 3px solid var(--accent);
+      padding-top: 2rem;
+    }
+    h3 { font-size: 1.4rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <nav id="site-nav" aria-label="Main navigation">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">AQ</span>
+      Air<span>Quality</span> NL
+    </a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="results.html" class="active">Results</a></li>
+      <li><a href="webgis.html">WebGIS</a></li>
+      <li><a href="data.html">Data &amp; Methods</a></li>
+    </ul>
+  </nav>
+
+  <main id="main">
     <div class="container">
       <section>
-        <h2>Lab Results</h2>
+        <div class="section-header reveal">
+          <h2 style="font-size:2.4rem;margin-bottom:.5rem">Lab Results</h2>
+          <p>Overview of all GIS lab results: pollutant concentration maps, population exposure, land cover change analysis, and correlation statistics.</p>
+        </div>
       </section>
 
-      <!-- ===== POLLUTANT OVERVIEW ===== -->
+      <!-- POLLUTANT OVERVIEW -->
       <section>
-        <h2>Pollutant Concentration &amp; Population Exposure</h2>
+        <div class="section-header reveal">
+          <h2>Pollutant Concentration &amp; Population Exposure</h2>
+        </div>
 
-        <div class="pollutant-tabs">
-          <button class="tab active" onclick="switchPollutantTab('no2')">
-            NO&#8322;
-          </button>
-          <button class="tab" onclick="switchPollutantTab('pm2p5')">
-            PM2.5
-          </button>
-          <button class="tab" onclick="switchPollutantTab('pm10')">
-            PM10
-          </button>
+        <div class="pollutant-tabs reveal" role="tablist" aria-label="Pollutant type">
+          <button class="tab" role="tab" aria-selected="true" aria-controls="panel-no2" id="tab-no2" onclick="switchPollutantTab('no2')">NO&#8322;</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-pm2p5" id="tab-pm2p5" onclick="switchPollutantTab('pm2p5')">PM2.5</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-pm10" id="tab-pm10" onclick="switchPollutantTab('pm10')">PM10</button>
         </div>
 
         <!-- NO2 Panel -->
-        <div id="panel-no2" class="pollutant-panel active">
-          <div class="result-item">
-            <img
-              src="images/no2_population_pie_chart.png"
-              alt="NO2 Pie Chart"
-              style="max-height: 380px; object-fit: contain; background: #fff"
-            />
+        <div id="panel-no2" class="pollutant-panel active" role="tabpanel" aria-labelledby="tab-no2">
+          <div class="result-item reveal">
+            <img class="chart-pie" src="images/no2_population_pie_chart.png" alt="NO2 population exposure pie chart">
             <div class="caption">
-              <strong>Population Exposure to NO&#8322;</strong> 90.2% lives in
-              Class 2 (10-25 &mu;g/m&sup3;)
+              <strong>Population Exposure to NO&#8322;</strong>
+              90.2% of the population lives in Class 2 (10-25 &mu;g/m&sup3;)
             </div>
           </div>
-
-          <div class="result-item" style="margin-top: 1.5rem">
-            <img
-              src="images/lcc_amac_bar_chart.png"
-              alt="NO2 LCC Chart"
-              style="
-                width: 100%;
-                max-width: 700px;
-                display: block;
-                margin: 0 auto;
-                background: #fff;
-              "
-            />
+          <div class="result-item reveal">
+            <img class="chart-bar" src="images/lcc_amac_bar_chart.png" alt="NO2 mean/min/max change by Built Area LCC category">
             <div class="caption">
-              <strong>NO&#8322; Change by LCC Type</strong> Min / Mean / Max per
-              transition class (Built Area)
+              <strong>NO&#8322; Change by LCC Type</strong>
+              Min / Mean / Max per transition class (Built Area)
             </div>
           </div>
-
           <h3>Exposure Summary</h3>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
-              <thead>
-                <tr>
-                  <th>EU Class</th>
-                  <th>Population</th>
-                  <th>%</th>
-                </tr>
-              </thead>
+              <thead><tr><th>EU Class</th><th>Population</th><th>%</th></tr></thead>
               <tbody id="no2-exposure-table-body"></tbody>
             </table>
           </div>
-
           <h3>NO&#8322; LCC Zonal Statistics Detail</h3>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
-              <thead>
-                <tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr>
-              </thead>
+              <thead><tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr></thead>
               <tbody>
-                <tr><td>Stable (Built → Built)</td><td>-1.8306</td><td>-4.6435</td><td>-0.4562</td></tr>
-                <tr><td>Gain (→ Built)</td><td>-1.6669</td><td>-2.1515</td><td>-1.1822</td></tr>
-                <tr><td>Loss (Built →)</td><td>-1.9892</td><td>-3.2082</td><td>-1.1281</td></tr>
+                <tr><td>Stable (Built &rarr; Built)</td><td>-1.8306</td><td>-4.6435</td><td>-0.4562</td></tr>
+                <tr><td>Gain (&rarr; Built)</td><td>-1.6669</td><td>-2.1515</td><td>-1.1822</td></tr>
+                <tr><td>Loss (Built &rarr;)</td><td>-1.9892</td><td>-3.2082</td><td>-1.1281</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <!-- PM2.5 Panel -->
-        <div id="panel-pm2p5" class="pollutant-panel">
-          <div class="result-item">
-            <img
-              src="images/pm2p5_population_pie_chart.png"
-              alt="PM2.5 Population Exposure"
-              style="max-height: 380px; object-fit: contain; background: #fff"
-            />
+        <div id="panel-pm2p5" class="pollutant-panel" role="tabpanel" aria-labelledby="tab-pm2p5">
+          <div class="result-item reveal">
+            <img class="chart-pie" src="images/pm2p5_population_pie_chart.png" alt="PM2.5 population exposure pie chart">
             <div class="caption">
               <strong>PM2.5 Population Exposure</strong>
+              Population distribution across PM2.5 pollution classes.
             </div>
           </div>
-          <div class="result-item" style="margin-top: 1.5rem">
-            <img
-              src="images/pm2p5_lcc_bar_chart.png"
-              alt="PM2.5 Change by LCC Type"
-              style="
-                width: 100%;
-                max-width: 700px;
-                display: block;
-                margin: 0 auto;
-                background: #fff;
-              "
-            />
+          <div class="result-item reveal">
+            <img class="chart-bar" src="images/pm2p5_lcc_bar_chart.png" alt="PM2.5 mean/min/max change by Crops LCC category">
             <div class="caption">
               <strong>PM2.5 Change by LCC Type</strong>
+              Min / Mean / Max per transition class (Crops)
             </div>
           </div>
-
           <h3>PM2.5 LCC Zonal Statistics Detail</h3>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
-              <thead>
-                <tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr>
-              </thead>
+              <thead><tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr></thead>
               <tbody>
                 <tr><td>Stable</td><td>-1.4828</td><td>-2.2578</td><td>-0.5185</td></tr>
                 <tr><td>Gain</td><td>-1.5108</td><td>-2.2578</td><td>-0.5187</td></tr>
@@ -388,40 +217,25 @@
         </div>
 
         <!-- PM10 Panel -->
-        <div id="panel-pm10" class="pollutant-panel">
-          <div class="result-item">
-            <img
-              src="images/pm10_population_pie_chart.png"
-              alt="PM10 Population Exposure"
-              style="max-height: 380px; object-fit: contain; background: #fff"
-            />
+        <div id="panel-pm10" class="pollutant-panel" role="tabpanel" aria-labelledby="tab-pm10">
+          <div class="result-item reveal">
+            <img class="chart-pie" src="images/pm10_population_pie_chart.png" alt="PM10 population exposure pie chart">
             <div class="caption">
               <strong>PM10 Population Exposure</strong>
+              Population distribution across PM10 pollution classes.
             </div>
           </div>
-          <div class="result-item" style="margin-top: 1.5rem">
-            <img
-              src="images/pm10_lcc_bar_chart.png"
-              alt="PM10 Change by LCC Type"
-              style="
-                width: 100%;
-                max-width: 700px;
-                display: block;
-                margin: 0 auto;
-                background: #fff;
-              "
-            />
+          <div class="result-item reveal">
+            <img class="chart-bar" src="images/pm10_lcc_bar_chart.png" alt="PM10 mean/min/max change by Trees LCC category">
             <div class="caption">
               <strong>PM10 Change by LCC Type</strong>
+              Min / Mean / Max per transition class (Trees)
             </div>
           </div>
-
           <h3>PM10 LCC Zonal Statistics Detail</h3>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
-              <thead>
-                <tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr>
-              </thead>
+              <thead><tr><th>Category</th><th>Mean (&mu;g/m&sup3;)</th><th>Min</th><th>Max</th></tr></thead>
               <tbody>
                 <tr><td>Stable</td><td>-1.6533</td><td>-2.8373</td><td>0.9198</td></tr>
                 <tr><td>Gain</td><td>-1.5272</td><td>-2.8375</td><td>0.9198</td></tr>
@@ -432,140 +246,132 @@
         </div>
       </section>
 
-      <!-- ===== LCC ===== -->
-      <section style="border-top: 3px solid #f8c630; padding-top: 2rem">
-        <h2>Land Cover Change (2021&#8594;2023)</h2>
-        <p>Land cover transition analysis using ESA WorldCover 10m data. Each student focused on a different land cover class.</p>
-
-        <div class="pollutant-tabs">
-          <button class="tab lcc-tab active" onclick="switchLccTab('built')">Built Area</button>
-          <button class="tab lcc-tab" onclick="switchLccTab('trees')">Trees</button>
-          <button class="tab lcc-tab" onclick="switchLccTab('crops')">Crops</button>
+      <!-- LCC -->
+      <section class="section-divider">
+        <div class="section-header reveal">
+          <h2>Land Cover Change (2021-2023)</h2>
+          <p>Land cover transition analysis using ESA WorldCover 10m data. Each student focused on a different land cover class.</p>
         </div>
 
-        <!-- Built Area (Student A) -->
+        <div class="pollutant-tabs reveal">
+          <button class="tab lcc-tab" role="tab" aria-selected="true" onclick="switchLccTab('built')">Built Area</button>
+          <button class="tab lcc-tab" role="tab" aria-selected="false" onclick="switchLccTab('trees')">Trees</button>
+          <button class="tab lcc-tab" role="tab" aria-selected="false" onclick="switchLccTab('crops')">Crops</button>
+        </div>
+
+        <!-- Built Area -->
         <div id="lcc-built" class="lcc-panel active">
-          <div class="summary-cards">
+          <div class="summary-cards reveal">
             <div class="summary-card"><div class="value">95.74%</div><div class="label">Stability (0.83 sq.deg)</div></div>
-            <div class="summary-card"><div class="value">63.77%</div><div class="label">Gain: Class 5 → Built (507), 0.052 sq.deg</div></div>
-            <div class="summary-card"><div class="value">63.78%</div><div class="label">Loss: Built → Class 5 (705), 0.024 sq.deg</div></div>
+            <div class="summary-card"><div class="value">63.77%</div><div class="label">Gain: Class 5 &rarr; Built (507), 0.052 sq.deg</div></div>
+            <div class="summary-card"><div class="value">63.78%</div><div class="label">Loss: Built &rarr; Class 5 (705), 0.024 sq.deg</div></div>
           </div>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
               <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th><th>Area (sq.deg)</th></tr></thead>
               <tbody>
-                <tr><td>Stability (Persistence)</td><td><strong>95.74%</strong></td><td>Built → Built</td><td>0.8306</td></tr>
-                <tr><td>Primary Source of Gain</td><td><strong>63.77%</strong></td><td>Class 5 → Built (507)</td><td>0.0521</td></tr>
-                <tr><td>2nd Source of Gain</td><td><strong>20.57%</strong></td><td>Class 2 → Built (207)</td><td>0.0168</td></tr>
-                <tr><td>3rd Source of Gain</td><td><strong>9.87%</strong></td><td>Class 11 → Built (1107)</td><td>0.0081</td></tr>
-                <tr><td>Primary Destination of Loss</td><td><strong>63.78%</strong></td><td>Built → Class 5 (705)</td><td>0.0236</td></tr>
-                <tr><td>2nd Destination of Loss</td><td><strong>14.10%</strong></td><td>Built → Class 11 (711)</td><td>0.0052</td></tr>
-                <tr><td>3rd Destination of Loss</td><td><strong>12.42%</strong></td><td>Built → Class 2 (702)</td><td>0.0046</td></tr>
+                <tr><td>Stability (Persistence)</td><td><strong>95.74%</strong></td><td>Built &rarr; Built</td><td>0.8306</td></tr>
+                <tr><td>Primary Source of Gain</td><td><strong>63.77%</strong></td><td>Class 5 &rarr; Built (507)</td><td>0.0521</td></tr>
+                <tr><td>2nd Source of Gain</td><td><strong>20.57%</strong></td><td>Class 2 &rarr; Built (207)</td><td>0.0168</td></tr>
+                <tr><td>3rd Source of Gain</td><td><strong>9.87%</strong></td><td>Class 11 &rarr; Built (1107)</td><td>0.0081</td></tr>
+                <tr><td>Primary Destination of Loss</td><td><strong>63.78%</strong></td><td>Built &rarr; Class 5 (705)</td><td>0.0236</td></tr>
+                <tr><td>2nd Destination of Loss</td><td><strong>14.10%</strong></td><td>Built &rarr; Class 11 (711)</td><td>0.0052</td></tr>
+                <tr><td>3rd Destination of Loss</td><td><strong>12.42%</strong></td><td>Built &rarr; Class 2 (702)</td><td>0.0046</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Trees (Student B) -->
+        <!-- Trees -->
         <div id="lcc-trees" class="lcc-panel">
-          <div class="summary-cards">
+          <div class="summary-cards reveal">
             <div class="summary-card"><div class="value">90.64%</div><div class="label">Stability (0.50 sq.deg)</div></div>
-            <div class="summary-card"><div class="value">56.25%</div><div class="label">Gain: Class 5 → Trees (502), 0.023 sq.deg</div></div>
-            <div class="summary-card"><div class="value">32.61%</div><div class="label">Loss: Trees → Built (207), 0.017 sq.deg</div></div>
+            <div class="summary-card"><div class="value">56.25%</div><div class="label">Gain: Class 5 &rarr; Trees (502), 0.023 sq.deg</div></div>
+            <div class="summary-card"><div class="value">32.61%</div><div class="label">Loss: Trees &rarr; Built (207), 0.017 sq.deg</div></div>
           </div>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
               <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th><th>Area (sq.deg)</th></tr></thead>
               <tbody>
-                <tr><td>Stability (Persistence)</td><td><strong>90.64%</strong></td><td>Trees → Trees</td><td>0.4993</td></tr>
-                <tr><td>Primary Source of Gain</td><td><strong>56.25%</strong></td><td>Class 5 → Trees (502)</td><td>0.0231</td></tr>
-                <tr><td>2nd Source of Gain</td><td><strong>24.91%</strong></td><td>Class 11 → Trees (1102)</td><td>0.0102</td></tr>
-                <tr><td>3rd Source of Gain</td><td><strong>11.17%</strong></td><td>Class 7 → Trees (702)</td><td>0.0046</td></tr>
-                <tr><td>Primary Destination of Loss</td><td><strong>32.61%</strong></td><td>Trees → Built (207)</td><td>0.0168</td></tr>
-                <tr><td>2nd Destination of Loss</td><td><strong>32.24%</strong></td><td>Trees → Crops (205)</td><td>0.0166</td></tr>
-                <tr><td>3rd Destination of Loss</td><td><strong>27.94%</strong></td><td>Trees → Class 11 (211)</td><td>0.0144</td></tr>
+                <tr><td>Stability (Persistence)</td><td><strong>90.64%</strong></td><td>Trees &rarr; Trees</td><td>0.4993</td></tr>
+                <tr><td>Primary Source of Gain</td><td><strong>56.25%</strong></td><td>Class 5 &rarr; Trees (502)</td><td>0.0231</td></tr>
+                <tr><td>2nd Source of Gain</td><td><strong>24.91%</strong></td><td>Class 11 &rarr; Trees (1102)</td><td>0.0102</td></tr>
+                <tr><td>3rd Source of Gain</td><td><strong>11.17%</strong></td><td>Class 7 &rarr; Trees (702)</td><td>0.0046</td></tr>
+                <tr><td>Primary Destination of Loss</td><td><strong>32.61%</strong></td><td>Trees &rarr; Built (207)</td><td>0.0168</td></tr>
+                <tr><td>2nd Destination of Loss</td><td><strong>32.24%</strong></td><td>Trees &rarr; Crops (205)</td><td>0.0166</td></tr>
+                <tr><td>3rd Destination of Loss</td><td><strong>27.94%</strong></td><td>Trees &rarr; Class 11 (211)</td><td>0.0144</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Crops (Student C) -->
+        <!-- Crops -->
         <div id="lcc-crops" class="lcc-panel">
-          <div class="summary-cards">
+          <div class="summary-cards reveal">
             <div class="summary-card"><div class="value">95.33%</div><div class="label">Stability (2.57 sq.deg)</div></div>
-            <div class="summary-card"><div class="value">41.36%</div><div class="label">Gain: Class 11 → Crops (1105), 0.033 sq.deg</div></div>
-            <div class="summary-card"><div class="value">41.52%</div><div class="label">Loss: Crops → Built (507), 0.052 sq.deg</div></div>
+            <div class="summary-card"><div class="value">41.36%</div><div class="label">Gain: Class 11 &rarr; Crops (1105), 0.033 sq.deg</div></div>
+            <div class="summary-card"><div class="value">41.52%</div><div class="label">Loss: Crops &rarr; Built (507), 0.052 sq.deg</div></div>
           </div>
-          <div class="table-wrapper compact-table">
+          <div class="table-wrapper compact-table reveal">
             <table>
               <thead><tr><th>Indicator</th><th>Value (%)</th><th>Category</th><th>Area (sq.deg)</th></tr></thead>
               <tbody>
-                <tr><td>Stability (Persistence)</td><td><strong>95.33%</strong></td><td>Crops → Crops</td><td>2.5668</td></tr>
-                <tr><td>Primary Source of Gain</td><td><strong>41.36%</strong></td><td>Class 11 → Crops (1105)</td><td>0.0332</td></tr>
-                <tr><td>2nd Source of Gain</td><td><strong>29.37%</strong></td><td>Built → Crops (705)</td><td>0.0236</td></tr>
-                <tr><td>3rd Source of Gain</td><td><strong>20.70%</strong></td><td>Trees → Crops (205)</td><td>0.0166</td></tr>
-                <tr><td>Primary Destination of Loss</td><td><strong>41.52%</strong></td><td>Crops → Built (507)</td><td>0.0521</td></tr>
-                <tr><td>2nd Destination of Loss</td><td><strong>34.62%</strong></td><td>Crops → Class 11 (511)</td><td>0.0435</td></tr>
-                <tr><td>3rd Destination of Loss</td><td><strong>18.41%</strong></td><td>Crops → Class 2 (502)</td><td>0.0231</td></tr>
+                <tr><td>Stability (Persistence)</td><td><strong>95.33%</strong></td><td>Crops &rarr; Crops</td><td>2.5668</td></tr>
+                <tr><td>Primary Source of Gain</td><td><strong>41.36%</strong></td><td>Class 11 &rarr; Crops (1105)</td><td>0.0332</td></tr>
+                <tr><td>2nd Source of Gain</td><td><strong>29.37%</strong></td><td>Built &rarr; Crops (705)</td><td>0.0236</td></tr>
+                <tr><td>3rd Source of Gain</td><td><strong>20.70%</strong></td><td>Trees &rarr; Crops (205)</td><td>0.0166</td></tr>
+                <tr><td>Primary Destination of Loss</td><td><strong>41.52%</strong></td><td>Crops &rarr; Built (507)</td><td>0.0521</td></tr>
+                <tr><td>2nd Destination of Loss</td><td><strong>34.62%</strong></td><td>Crops &rarr; Class 11 (511)</td><td>0.0435</td></tr>
+                <tr><td>3rd Destination of Loss</td><td><strong>18.41%</strong></td><td>Crops &rarr; Class 2 (502)</td><td>0.0231</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
     </div>
+  </main>
 
-    <footer>
-      <p>
-        <strong>GIS Lab Project</strong> &mdash; Politecnico di Milano &mdash;
-        A.A. 2025/26
-      </p>
-      <p>
-        Data: CAMS, ESA WorldCover, WorldPop, GADM &mdash; Built with OpenLayers
-      </p>
-    </footer>
+  <footer>
+    <p><strong>GIS Lab Project</strong> - Politecnico di Milano - A.A. 2025/26</p>
+    <p>Data: CAMS, ESA WorldCover, WorldPop, GADM - Built with OpenLayers</p>
+  </footer>
 
-    <script src="js/results-data.js"></script>
-    <script>
-      function switchPollutantTab(poll) {
-        var tabs = document.querySelectorAll('.pollutant-tabs > .tab');
-        var panels = document.querySelectorAll('.pollutant-panel');
-        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-        for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
-        if (poll === 'no2') tabs[0].classList.add('active');
-        else if (poll === 'pm2p5') tabs[1].classList.add('active');
-        else if (poll === 'pm10') tabs[2].classList.add('active');
-        document.getElementById('panel-' + poll).classList.add('active');
-      }
+  <script src="js/results-data.js"></script>
+  <script src="js/app.js" defer></script>
+  <script>
+    function switchPollutantTab(poll) {
+      var tabs = document.querySelectorAll('.pollutant-tabs > .tab:not(.lcc-tab)');
+      var panels = document.querySelectorAll('.pollutant-panel');
+      for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); tabs[i].setAttribute('aria-selected', 'false'); }
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+      var tab = document.getElementById('tab-' + poll);
+      if (tab) { tab.classList.add('active'); tab.setAttribute('aria-selected', 'true'); }
+      var panel = document.getElementById('panel-' + poll);
+      if (panel) panel.classList.add('active');
+    }
 
-      function switchLccTab(lcc) {
-        var tabs = document.querySelectorAll('.lcc-tab');
-        var panels = document.querySelectorAll('.lcc-panel');
-        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-        for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
-        if (lcc === 'built') tabs[0].classList.add('active');
-        else if (lcc === 'trees') tabs[1].classList.add('active');
-        else if (lcc === 'crops') tabs[2].classList.add('active');
-        document.getElementById('lcc-' + lcc).classList.add('active');
-      }
+    function switchLccTab(lcc) {
+      var tabs = document.querySelectorAll('.lcc-tab');
+      var panels = document.querySelectorAll('.lcc-panel');
+      for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); tabs[i].setAttribute('aria-selected', 'false'); }
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+      var tab = document.querySelector('.lcc-tab[onclick*="' + lcc + '"]');
+      if (tab) { tab.classList.add('active'); tab.setAttribute('aria-selected', 'true'); }
+      var panel = document.getElementById('lcc-' + lcc);
+      if (panel) panel.classList.add('active');
+    }
 
-      (function() {
-        var tb = document.getElementById('no2-bivariate-table-body');
-        if (tb && typeof TABLE_BIVARIATE !== 'undefined' && TABLE_BIVARIATE.length > 0) {
-          tb.innerHTML = '';
-          for (var i = 0; i < TABLE_BIVARIATE.length; i++) {
-            var p = TABLE_BIVARIATE[i];
-            tb.innerHTML += '<tr><td>' + (p.NAME_1||'') + '</td><td>' + (p.pop_class_median||'') + '</td><td>' + (p.pol_class_max||'') + '</td><td><strong>' + (p.bivariate||'') + '</strong></td></tr>';
-          }
+    (function() {
+      var te = document.getElementById('no2-exposure-table-body');
+      if (te && typeof TABLE_CHART !== 'undefined' && TABLE_CHART.length > 0) {
+        te.innerHTML = '';
+        TABLE_CHART.sort(function(a,b){return a.pol_class_max-b.pol_class_max});
+        for (var i = 0; i < TABLE_CHART.length; i++) {
+          var p = TABLE_CHART[i];
+          te.innerHTML += '<tr><td>Class '+(p.pol_class_max||'')+' ('+(p.pol_class_max===1?'&le;10':'10-25')+' &mu;g/m&sup3;)</td><td>'+(parseFloat(p.pop_sum)||0).toLocaleString()+'</td><td>'+(parseFloat(p.pop_pct)||0)+'%</td></tr>';
         }
-        var te = document.getElementById('no2-exposure-table-body');
-        if (te && typeof TABLE_CHART !== 'undefined' && TABLE_CHART.length > 0) {
-          te.innerHTML = '';
-          TABLE_CHART.sort(function(a,b){return a.pol_class_max-b.pol_class_max;});
-          for (var i = 0; i < TABLE_CHART.length; i++) {
-            var p = TABLE_CHART[i];
-            te.innerHTML += '<tr><td>Class ' + (p.pol_class_max||'') + ' (' + (p.pol_class_max===1?'&le;10':'10-25') + ' &mu;g/m&sup3;)</td><td>' + (parseFloat(p.pop_sum)||0).toLocaleString() + '</td><td>' + (parseFloat(p.pop_pct)||0) + '%</td></tr>';
-          }
-        }
-      })();
-    </script>
-  
+      }
+    })();
+  </script>
+</body>
+</html>
