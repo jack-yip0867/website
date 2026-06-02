@@ -194,7 +194,7 @@ popupCloser.addEventListener('click', function(e) {
     return false;
 });
 
-popupContainer.style.cssText = 'background:white;border-radius:8px;padding:12px 16px;box-shadow:0 2px 15px rgba(0,0,0,0.2);font-size:13px;max-width:280px;';
+popupContainer.style.cssText = 'background:white;border-radius:8px;padding:12px 16px;box-shadow:0 2px 15px rgba(0,0,0,0.2);font-size:13px;min-width:300px;max-width:fit-content;overflow:visible;';
 popupCloser.style.cssText = 'text-decoration:none;position:absolute;top:4px;right:8px;font-size:16px;color:#999;';
 
 map.on('singleclick', function(evt) {
@@ -220,12 +220,12 @@ map.on('singleclick', function(evt) {
                 .then(function(data) {
                     if (data.features && data.features.length > 0) {
                         var props = data.features[0].properties;
-                        var html = '<table style="width:100%;border-collapse:collapse;">';
+                        var html = '<table style="width:100%;border-collapse:collapse;table-layout:auto;">';
                         for (var key in props) {
                             var val = props[key];
                             if (val === null || val === undefined) val = '';
-                            if (typeof val === 'number') val = val.toFixed(2);
-                            html += '<tr><td style="padding:2px 6px;font-weight:600;color:#2d6e49;">' + key + '</td><td style="padding:2px 6px;">' + val + '</td></tr>';
+                            if (typeof val === 'number') val = Number.isInteger(val) ? val : val.toFixed(2);
+                            html += '<tr><td style="padding:2px 8px;font-weight:600;color:#2d6e49;white-space:nowrap;vertical-align:top;">' + key + ':</td><td style="padding:2px 8px;vertical-align:top;">' + val + '</td></tr>';
                         }
                         html += '</table>';
                         popupContent.innerHTML = html;
