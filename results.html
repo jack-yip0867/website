@@ -264,11 +264,6 @@
     <div class="container">
       <section>
         <h2>Lab Results</h2>
-        <p>
-          Overview of all GIS lab results: pollutant concentration maps,
-          population exposure, land cover change analysis, and correlation
-          statistics.
-        </p>
       </section>
 
       <!-- ===== POLLUTANT OVERVIEW ===== -->
@@ -277,13 +272,13 @@
 
         <div class="pollutant-tabs">
           <button class="tab active" onclick="switchPollutantTab('no2')">
-            NO&#8322; <span class="badge">&#9989; ready</span>
+            NO&#8322;
           </button>
           <button class="tab" onclick="switchPollutantTab('pm2p5')">
-            PM2.5 <span class="badge">&#9989; ready</span>
+            PM2.5
           </button>
           <button class="tab" onclick="switchPollutantTab('pm10')">
-            PM10 <span class="badge">&#9989; ready</span>
+            PM10
           </button>
         </div>
 
@@ -444,9 +439,9 @@
         <p>Land cover transition analysis using ESA WorldCover 10m data. Each student focused on a different land cover class.</p>
 
         <div class="pollutant-tabs">
-          <button class="tab lcc-tab active" onclick="switchLccTab('built')">Built Area <span class="badge">Student A</span></button>
-          <button class="tab lcc-tab" onclick="switchLccTab('trees')">Trees <span class="badge">Student B</span></button>
-          <button class="tab lcc-tab" onclick="switchLccTab('crops')">Crops <span class="badge">Student C</span></button>
+          <button class="tab lcc-tab active" onclick="switchLccTab('built')">Built Area</button>
+          <button class="tab lcc-tab" onclick="switchLccTab('trees')">Trees</button>
+          <button class="tab lcc-tab" onclick="switchLccTab('crops')">Crops</button>
         </div>
 
         <!-- Built Area (Student A) -->
@@ -532,107 +527,46 @@
 
     <script src="js/results-data.js"></script>
     <script>
+      function switchPollutantTab(poll) {
+        var tabs = document.querySelectorAll('.pollutant-tabs > .tab');
+        var panels = document.querySelectorAll('.pollutant-panel');
+        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+        for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+        if (poll === 'no2') tabs[0].classList.add('active');
+        else if (poll === 'pm2p5') tabs[1].classList.add('active');
+        else if (poll === 'pm10') tabs[2].classList.add('active');
+        document.getElementById('panel-' + poll).classList.add('active');
+      }
+
       function switchLccTab(lcc) {
         var tabs = document.querySelectorAll('.lcc-tab');
         var panels = document.querySelectorAll('.lcc-panel');
-        tabs.forEach(function(t){ t.classList.remove('active'); });
-        panels.forEach(function(p){ p.classList.remove('active'); });
+        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+        for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
         if (lcc === 'built') tabs[0].classList.add('active');
         else if (lcc === 'trees') tabs[1].classList.add('active');
         else if (lcc === 'crops') tabs[2].classList.add('active');
         document.getElementById('lcc-' + lcc).classList.add('active');
       }
-      function switchPollutantTab(poll) {
-        var tabs = document.querySelectorAll(".pollutant-tabs .tab");
-        var panels = document.querySelectorAll(".pollutant-panel");
-        for (var i = 0; i < tabs.length; i++)
-          tabs[i].classList.remove("active");
-        for (var i = 0; i < panels.length; i++)
-          panels[i].classList.remove("active");
-        if (poll === "no2") tabs[0].classList.add("active");
-        else if (poll === "pm2p5") tabs[1].classList.add("active");
-        else if (poll === "pm10") tabs[2].classList.add("active");
-        document.getElementById("panel-" + poll).classList.add("active");
-      }
 
-      (function () {
-        var tb = document.getElementById("no2-bivariate-table-body");
-        if (
-          tb &&
-          typeof TABLE_BIVARIATE !== "undefined" &&
-          TABLE_BIVARIATE.length > 0
-        ) {
-          tb.innerHTML = "";
+      (function() {
+        var tb = document.getElementById('no2-bivariate-table-body');
+        if (tb && typeof TABLE_BIVARIATE !== 'undefined' && TABLE_BIVARIATE.length > 0) {
+          tb.innerHTML = '';
           for (var i = 0; i < TABLE_BIVARIATE.length; i++) {
             var p = TABLE_BIVARIATE[i];
-            tb.innerHTML +=
-              "<tr><td>" +
-              (p.NAME_1 || "") +
-              "</td><td>" +
-              (p.pop_class_median || "") +
-              "</td><td>" +
-              (p.pol_class_max || "") +
-              "</td><td><strong>" +
-              (p.bivariate || "") +
-              "</strong></td></tr>";
+            tb.innerHTML += '<tr><td>' + (p.NAME_1||'') + '</td><td>' + (p.pop_class_median||'') + '</td><td>' + (p.pol_class_max||'') + '</td><td><strong>' + (p.bivariate||'') + '</strong></td></tr>';
           }
         }
-        var te = document.getElementById("no2-exposure-table-body");
-        if (
-          te &&
-          typeof TABLE_CHART !== "undefined" &&
-          TABLE_CHART.length > 0
-        ) {
-          te.innerHTML = "";
-          TABLE_CHART.sort(function (a, b) {
-            return a.pol_class_max - b.pol_class_max;
-          });
+        var te = document.getElementById('no2-exposure-table-body');
+        if (te && typeof TABLE_CHART !== 'undefined' && TABLE_CHART.length > 0) {
+          te.innerHTML = '';
+          TABLE_CHART.sort(function(a,b){return a.pol_class_max-b.pol_class_max;});
           for (var i = 0; i < TABLE_CHART.length; i++) {
             var p = TABLE_CHART[i];
-            te.innerHTML +=
-              "<tr><td>Class " +
-              (p.pol_class_max || "") +
-              " (" +
-              (p.pol_class_max === 1 ? "&le;10" : "10-25") +
-              " &mu;g/m&sup3;)</td><td>" +
-              (parseFloat(p.pop_sum) || 0).toLocaleString() +
-              "</td><td>" +
-              (parseFloat(p.pop_pct) || 0) +
-              "%</td></tr>";
-          }
-        }
-      })();
-
-      (function () {
-        var tb = document.getElementById("lcc-zonal-table-body");
-        if (
-          tb &&
-          typeof LCC_ZONAL_STATS !== "undefined" &&
-          LCC_ZONAL_STATS.length > 0
-        ) {
-          tb.innerHTML = "";
-          LCC_ZONAL_STATS.sort(function (a, b) {
-            return a.code - b.code;
-          });
-          for (var i = 0; i < LCC_ZONAL_STATS.length; i++) {
-            var d = LCC_ZONAL_STATS[i];
-            tb.innerHTML +=
-              "<tr><td>" +
-              d.code +
-              "</td><td>" +
-              d.transition +
-              "</td><td>" +
-              d.count +
-              "</td><td>" +
-              d.mean.toFixed(4) +
-              "</td><td>" +
-              d.min.toFixed(4) +
-              "</td><td>" +
-              d.max.toFixed(4) +
-              "</td></tr>";
+            te.innerHTML += '<tr><td>Class ' + (p.pol_class_max||'') + ' (' + (p.pol_class_max===1?'&le;10':'10-25') + ' &mu;g/m&sup3;)</td><td>' + (parseFloat(p.pop_sum)||0).toLocaleString() + '</td><td>' + (parseFloat(p.pop_pct)||0) + '%</td></tr>';
           }
         }
       })();
     </script>
-  </body>
-</html>
+  
