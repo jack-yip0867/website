@@ -257,6 +257,9 @@ popupContainer.style.cssText = 'background:white;border-radius:8px;padding:12px 
 popupCloser.style.cssText = 'text-decoration:none;position:absolute;top:4px;right:8px;font-size:16px;color:#999;';
 
 map.on('singleclick', function(evt) {
+    // Hide popup immediately on every click
+    popupOverlay.setPosition(undefined);
+
     var view = map.getView();
     var resolution = view.getResolution();
     var projection = view.getProjection();
