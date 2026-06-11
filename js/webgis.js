@@ -14,7 +14,7 @@ var WORKSPACE = 'gisgeoserver_02';
 
 // --- Student layer config ---
 var STUDENTS = {
-    1: { layer: 'songjiwei_bivariate', name: 'songjiwei', pollutant: 'NO₂' },
+    1: { layer: 'Netherlands_no2_2023_bivariate_mun', name: 'songjiwei', pollutant: 'NO₂' },
     2: { layer: 'zhangzihao_bivariate', name: 'zhangzihao', pollutant: 'PM2.5' },
     3: { layer: 'yehongjie_bivariate', name: 'yehongjie', pollutant: 'PM10' }
 };
@@ -137,23 +137,82 @@ function toggleStudentLayer(studentId, visible) {
     updateAllLegends();
 }
 
-// --- Dynamic Legend from GeoServer GetLegendGraphic ---
-function getLegendUrl(studentId) {
-    var cfg = STUDENTS[studentId];
-    var layerName = WORKSPACE + ':' + cfg.layer;
-    return GEOSERVER_WMS + '?REQUEST=GetLegendGraphic&VERSION=1.3.0&FORMAT=image/png&LAYER=' + encodeURIComponent(layerName) + '&STYLE=';
+// --- Dynamic Bivariate Legend (Canvas 5x5) ---
+// Colors extracted from GeoServer GetLegendGraphic (same for all 3 students)
+// Grid: rows = Population Class (1-5), cols = Pollution Class (1-5)
+var BIVARIATE_COLORS = [
+  // pop1:                pol1                     pol2                pol3                pol4                pol5
+  [[255, 255, 255], [255, 232, 238], [255, 203, 215], [255, 174, 192], [255, 136, 166]], // pop1
+  [[221, 255, 253], [205, 230, 229], [195, 198, 203], [187, 168, 180], [176, 142, 166]], // pop2
+  [[185, 255, 252], [164, 223, 221], [149, 182, 195], [138, 156, 173], [125, 139, 161]], // pop3
+  [[124, 253, 253], [100, 219, 220], [ 84, 181, 189], [ 69, 145, 160], [ 57, 126, 141]], // pop4
+  [[ 80, 255, 253], [ 68, 214, 212], [ 60, 159, 173], [ 50, 120, 143], [ 42, 102, 130]]  // pop5
+];
+
+function drawBivariateLegend(canvas) {
+    var ctx = canvas.getContext('2d');
+    var gridSize = 5;
+    var cellW = 38;
+    var cellH = 38;
+    var margin = { top: 5, right: 5, bottom: 30, left: 42 };
+    var cw = margin.left + gridSize * cellW + margin.right;
+    var ch = margin.top + gridSize * cellH + margin.bottom;
+
+    canvas.width = cw;
+    canvas.height = ch;
+    canvas.style.display = 'block';
+
+    // Draw cells (i=row=pop_class, j=col=pol_class)
+    for (var i = 0; i < gridSize; i++) {
+        for (var j = 0; j < gridSize; j++) {
+            var rgb = BIVARIATE_COLORS[i][j];
+            var x = margin.left + j * cellW;
+            var y = margin.top + i * cellH;
+
+            ctx.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+            ctx.fillRect(x, y, cellW, cellH);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, cellW, cellH);
+
+            // Label: row digit + col digit → bivariate value (e.g. "12")
+            var label = (i + 1) + '' + (j + 1);
+            // White text on dark cells, dark text on light cells
+            var brightness = rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114;
+            ctx.fillStyle = brightness < 160 ? '#fff' : '#222';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, x + cellW / 2, y + cellH / 2);
+        }
+    }
+
+    // X-axis label
+    ctx.fillStyle = '#333';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Pollution Class →', margin.left + (gridSize * cellW) / 2, ch - 4);
+
+    // Y-axis label
+    ctx.save();
+    ctx.translate(12, margin.top + (gridSize * cellH) / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Population Class →', 0, 0);
+    ctx.restore();
 }
 
 function updateAllLegends() {
     [1, 2, 3].forEach(function(sid) {
-        var img = document.getElementById('legend-img-s' + sid);
+        var container = document.getElementById('legend-canvas-s' + sid);
         var wrap = document.getElementById('legend-wrap-s' + sid);
-        if (!img || !wrap) return;
+        if (!container || !wrap) return;
         if (studentLayers[sid].getVisible()) {
             wrap.style.display = '';
-            if (!img.src || img.dataset.loaded !== '1') {
-                img.src = getLegendUrl(sid);
-                img.dataset.loaded = '1';
+            // Only draw once
+            if (container.children.length === 0) {
+                var canvas = document.createElement('canvas');
+                drawBivariateLegend(canvas);
+                container.appendChild(canvas);
             }
         } else {
             wrap.style.display = 'none';
