@@ -14,9 +14,9 @@ var WORKSPACE = 'gisgeoserver_02';
 
 // --- Student layer config ---
 var STUDENTS = {
-    1: { layer: 'Netherlands_no2_2023_bivariate_mun', name: 'songjiwei', pollutant: 'NO₂' },
-    2: { layer: 'zhangzihao_bivariate', name: 'zhangzihao', pollutant: 'PM2.5' },
-    3: { layer: 'yehongjie_bivariate', name: 'yehongjie', pollutant: 'PM10' }
+    1: { layer: 'Netherlands_no2_2023_bivariate_mun', amacLayer: 'Netherlands_no2_2021_2023_AMAC_map', amacStyle: '', name: 'songjiwei', pollutant: 'NO₂' },
+    2: { layer: 'zhangzihao_bivariate', amacLayer: 'Netherlands_pm2p5_2021_2023_AMAC_map', amacStyle: '', name: 'zhangzihao', pollutant: 'PM2.5' },
+    3: { layer: 'yehongjie_bivariate', amacLayer: 'Netherlands_pm10_2021_2023_AMAC_map', amacStyle: '', name: 'yehongjie', pollutant: 'PM10' }
 };
 
 // --- Basemaps ---
@@ -71,6 +71,31 @@ var studentSources = {};
     studentLayers[id] = layer;
 });
 
+// --- Build AMAC WMS layers for each student ---
+var amacLayers = {};
+var amacSources = {};
+
+[1, 2, 3].forEach(function(id) {
+    var cfg = STUDENTS[id];
+    var source = new ol.source.TileWMS({
+        url: GEOSERVER_WMS,
+        params: {
+            LAYERS: WORKSPACE + ':' + cfg.amacLayer,
+            STYLES: cfg.amacStyle || ''
+        },
+        serverType: 'geoserver',
+        transition: 0
+    });
+    amacSources[id] = source;
+
+    var layer = new ol.layer.Tile({
+        title: cfg.name + ' - ' + cfg.pollutant + ' AMAC',
+        visible: false,
+        source: source
+    });
+    amacLayers[id] = layer;
+});
+
 // --- If student param present, show only that student; otherwise default to student 1 ---
 if (!activeStudent) activeStudent = 1;
 [1, 2, 3].forEach(function(sid) {
@@ -87,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // --- Map ---
 var map = new ol.Map({
     target: 'map',
-    layers: [osmLayer, cartoLayer, satelliteLayer, studentLayers[1], studentLayers[2], studentLayers[3]],
+    layers: [osmLayer, cartoLayer, satelliteLayer, studentLayers[1], studentLayers[2], studentLayers[3], amacLayers[1], amacLayers[2], amacLayers[3]],
     view: new ol.View({
         center: ol.proj.fromLonLat([5.5, 52.2]),
         zoom: 8,
@@ -117,23 +142,34 @@ function setBaseLayer(name) {
     });
 }
 
-// --- Toggle Student Layer (mutually exclusive) ---
-function toggleStudentLayer(studentId, visible) {
-    if (!visible) {
-        // Don't allow unchecking the only visible layer
-        var anyVisible = false;
-        [1, 2, 3].forEach(function(sid) {
-            if (studentLayers[sid].getVisible()) anyVisible = true;
-        });
-        if (!anyVisible) return;
+// --- Toggle Layer (single-select across all bivariate + AMAC) ---
+function toggleLayer(type, studentId, checked) {
+    // Don't allow deselecting — at least one layer must be visible
+    if (!checked) {
+        var cb = document.getElementById('chk-s' + studentId + (type === 'amac' ? '-amac' : ''));
+        if (cb) cb.checked = true;
+        return;
     }
-    // Show only the selected student, hide others
+
+    // Uncheck all boxes and hide all layers
     [1, 2, 3].forEach(function(sid) {
-        var show = (sid === studentId) && visible;
-        studentLayers[sid].setVisible(show);
+        studentLayers[sid].setVisible(false);
         var cb = document.getElementById('chk-s' + sid);
-        if (cb) cb.checked = show;
+        if (cb) cb.checked = false;
+        amacLayers[sid].setVisible(false);
+        var cbA = document.getElementById('chk-s' + sid + '-amac');
+        if (cbA) cbA.checked = false;
     });
+
+    // Show only the selected layer
+    if (type === 'bivariate') {
+        studentLayers[studentId].setVisible(true);
+        document.getElementById('chk-s' + studentId).checked = true;
+    } else {
+        amacLayers[studentId].setVisible(true);
+        document.getElementById('chk-s' + studentId + '-amac').checked = true;
+    }
+
     updateAllLegends();
 }
 
@@ -202,17 +238,43 @@ function drawBivariateLegend(canvas) {
 }
 
 function updateAllLegends() {
+    // Bivariate legends
     [1, 2, 3].forEach(function(sid) {
         var container = document.getElementById('legend-canvas-s' + sid);
         var wrap = document.getElementById('legend-wrap-s' + sid);
         if (!container || !wrap) return;
         if (studentLayers[sid].getVisible()) {
             wrap.style.display = '';
-            // Only draw once
             if (container.children.length === 0) {
                 var canvas = document.createElement('canvas');
                 drawBivariateLegend(canvas);
                 container.appendChild(canvas);
+            }
+        } else {
+            wrap.style.display = 'none';
+        }
+    });
+    // AMAC legends — fetched from GeoServer GetLegendGraphic
+    [1, 2, 3].forEach(function(sid) {
+        var container = document.getElementById('legend-canvas-s' + sid + '-amac');
+        var wrap = document.getElementById('legend-wrap-s' + sid + '-amac');
+        if (!container || !wrap) return;
+        if (amacLayers[sid].getVisible()) {
+            wrap.style.display = '';
+            if (container.children.length === 0) {
+                var cfg = STUDENTS[sid];
+                var legendUrl = GEOSERVER_WMS +
+                    '?service=WMS&version=1.3.0&request=GetLegendGraphic' +
+                    '&layer=' + encodeURIComponent(WORKSPACE + ':' + cfg.amacLayer) +
+                    '&format=image/png';
+                if (cfg.amacStyle) {
+                    legendUrl += '&style=' + encodeURIComponent(cfg.amacStyle);
+                }
+                var img = document.createElement('img');
+                img.src = legendUrl;
+                img.style.maxWidth = '260px';
+                img.onerror = function() { this.style.display = 'none'; };
+                container.appendChild(img);
             }
         } else {
             wrap.style.display = 'none';
@@ -264,19 +326,13 @@ map.on('singleclick', function(evt) {
     var resolution = view.getResolution();
     var projection = view.getProjection();
 
-    // Try each visible student layer for GetFeatureInfo
-    var found = false;
-    [1, 2, 3].forEach(function(sid) {
-        if (found || !studentLayers[sid].getVisible()) return;
-        var source = studentSources[sid];
+    // Show feature info for whichever layer is visible (bivariate or AMAC)
+    function getFeatureInfoForSource(source) {
         var url = source.getFeatureInfoUrl(
-            evt.coordinate,
-            resolution,
-            projection,
+            evt.coordinate, resolution, projection,
             { INFO_FORMAT: 'application/json' }
         );
         if (url) {
-            found = true;
             fetch(url)
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
@@ -296,5 +352,12 @@ map.on('singleclick', function(evt) {
                 })
                 .catch(function() {});
         }
+    }
+
+    var found = false;
+    [1, 2, 3].forEach(function(sid) {
+        if (found) return;
+        if (studentLayers[sid].getVisible()) { found = true; getFeatureInfoForSource(studentSources[sid]); }
+        if (amacLayers[sid].getVisible()) { found = true; getFeatureInfoForSource(amacSources[sid]); }
     });
 });

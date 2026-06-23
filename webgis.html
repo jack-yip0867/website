@@ -55,17 +55,20 @@
             <div class="separator"></div>
 
             <span class="student-label">songjiwei (NO₂)</span>
-            <label><input type="checkbox" id="chk-s1" checked onchange="toggleStudentLayer(1, this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s1" checked onchange="toggleLayer('bivariate', 1, this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s1-amac" onchange="toggleLayer('amac', 1, this.checked)"> AMAC</label>
 
             <div class="separator"></div>
 
             <span class="student-label">zhangzihao (PM2.5)</span>
-            <label><input type="checkbox" id="chk-s2" checked onchange="toggleStudentLayer(2, this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s2" checked onchange="toggleLayer('bivariate', 2, this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s2-amac" onchange="toggleLayer('amac', 2, this.checked)"> AMAC</label>
 
             <div class="separator"></div>
 
             <span class="student-label">yehongjie (PM10)</span>
-            <label><input type="checkbox" id="chk-s3" checked onchange="toggleStudentLayer(3, this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s3" checked onchange="toggleLayer('bivariate', 3, this.checked)"> Bivariate</label>
+            <label><input type="checkbox" id="chk-s3-amac" onchange="toggleLayer('amac', 3, this.checked)"> AMAC</label>
 
             <div class="separator"></div>
         </div>
@@ -85,6 +88,18 @@
             <div id="legend-wrap-s3" class="legend-section">
                 <h5>yehongjie &mdash; PM10 Bivariate</h5>
                 <div id="legend-canvas-s3"></div>
+            </div>
+            <div id="legend-wrap-s1-amac" class="legend-section">
+                <h5>songjiwei &mdash; NO&#8322; AMAC</h5>
+                <div id="legend-canvas-s1-amac"></div>
+            </div>
+            <div id="legend-wrap-s2-amac" class="legend-section">
+                <h5>zhangzihao &mdash; PM2.5 AMAC</h5>
+                <div id="legend-canvas-s2-amac"></div>
+            </div>
+            <div id="legend-wrap-s3-amac" class="legend-section">
+                <h5>yehongjie &mdash; PM10 AMAC</h5>
+                <div id="legend-canvas-s3-amac"></div>
             </div>
         </div>
     </div>
